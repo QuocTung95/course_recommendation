@@ -1,0 +1,20 @@
+[
+  {
+    "id": "course_001",
+    "title": "Python for Beginners",
+    "description": "Learn Python programming from scratch. Covers variables, loops, functions, and simple projects.",
+    "keywords": ["python", "programming", "beginner", "coding"]
+  },
+  {
+    "id": "course_002",
+    "title": "Data Science with Python",
+    "description": "Data analysis, visualization, and machine learning using Python libraries such as pandas and scikit-learn.",
+    "keywords": ["data science", "machine learning", "python", "analytics"]
+  },
+  {
+    "id": "course_003",
+    "title": "Web Development with React",
+    "description": "Learn modern frontend development with React, hooks, components, and state management.",
+    "keywords": ["react", "javascript", "frontend", "web development"]
+  }
+]
