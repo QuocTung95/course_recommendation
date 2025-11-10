@@ -1,0 +1,92 @@
+[00:00:01.146] Server  LOG      ✓ Ready in 829ms
+[00:00:10.427] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html
+                          lang="vi"
+-                         className="mdl-js"
+                        >
+                  ...
+
+[00:00:32.098] Browser LOG     🔄 Đang tạo quiz từ API...
+[00:00:32.099] Browser LOG     🚀 Gửi request tạo quiz: {"career_goal":"Backend Developer","profile_text":"Tên: Nguyễn Quốc Tùng\nKinh nghiệm: 2 năm lập trình Python, từng làm dự án web Flask\nHọc vấn: Đại học Công nghệ Thông tin\nKỹ năng: Python, Flask, HTML, CSS, SQL\nMục tiêu: Trở thành Fullstack Developer chuyên nghiệp","quiz_type":"pre-quiz"}
+[00:00:38.140] Browser LOG     ✅ Nhận response quiz: {"quiz":[{"answer":"B","options":["A. Java","B. Python","C. C++","D. Ruby"],"question":"Ngôn ngữ lập trình nào được Nguyễn Quốc Tùng sử dụng nhiều nhất trong 2 năm qua?"},{"answer":"B","options":["A. Django","B. Flask","C. Express","D. Spring"],"question":"Framework nào mà Nguyễn Quốc Tùng đã từng làm dự án web?"},{"answer":"C","options":["A. HTML","B. CSS","C. JavaScript","D. SQL"],"question":"Kỹ năng nào sau đây không nằm trong danh sách kỹ năng của Nguyễn Quốc Tùng?"}]}
+[00:00:38.140] Browser LOG     ✅ Đã nhận quiz từ API: 3 câu hỏi
+[00:03:11.356] Server  LOG      ✓ Compiled in 31ms
+[00:05:31.781] Server  LOG      ✓ Compiled in 84ms
+[00:05:32.430] Browser LOG     🔄 Đang tải khóa học từ API...
+[00:05:32.430] Browser LOG     🚀 Gửi request gợi ý khóa học: {"career_goal":"Backend Developer","profile_text":"Tên: Nguyễn Quốc Tùng\nKinh nghiệm: 2 năm lập trình Python, từng làm dự án web Flask\nHọc vấn: Đại học Công nghệ Thông tin\nKỹ năng: Python, Flask, HTML, CSS, SQL\nMục tiêu: Trở thành Fullstack Developer chuyên nghiệp"}
+[00:05:35.327] Browser LOG     ✅ Nhận response courses: {"courses":[{"course_title":"Python for Beginners","similarity":0.09090909090909091,"text":"Python for Beginners Learn Python programming from scratch. Covers variables, loops, functions, and simple projects."},{"course_title":"Data Science with Python","similarity":0.09090909090909091,"text":"Data Science with Python Data analysis, visualization, and machine learning using Python libraries such as pandas and scikit-learn."},{"course_title":"Web Development with React","similarity":0.09090909090909091,"text":"Web Development with React Learn modern frontend development with React, hooks, components, and state management."}]}
+[00:05:35.327] Browser LOG     ✅ Đã nhận courses từ API: 3 khóa học
+[00:05:58.961] Server  LOG      ✓ Compiled in 46ms
+[00:06:04.740] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <RootLayout>
+                        <html
+                          lang="vi"
+-                         className="mdl-js"
+                        >
+                  ...
+
+[00:06:31.700] Browser LOG     🔄 Đang tạo quiz từ API...
+[00:06:31.700] Browser LOG     🚀 Gửi request tạo quiz: {"career_goal":"Fullstack Developer","profile_text":"Tên: Nguyễn Quốc Tùng\nKinh nghiệm: 2 năm lập trình Python, từng làm dự án web Flask\nHọc vấn: Đại học Công nghệ Thông tin\nKỹ năng: Python, Flask, HTML, CSS, SQL, Git, REST API\nMục tiêu: Trở thành Fullstack Developer chuyên nghiệp\nDự án đã làm:\n- Website bán hàng với Flask và MySQL\n- REST API cho ứng dụng mobile\n- Integration với payment gateway","quiz_type":"pre-quiz"}
+[00:06:38.850] Browser LOG     ✅ Nhận response quiz: {"quiz":[{"answer":"B","options":["A. 1 năm","B. 2 năm","C. 3 năm","D. 4 năm"],"question":"Nguyễn Quốc Tùng có bao nhiêu năm kinh nghiệm lập trình Python?"},{"answer":"B","options":["A. Django","B. Flask","C. Ruby on Rails","D. Laravel"],"question":"Nguyễn Quốc Tùng đã sử dụng công nghệ nào để xây dựng website bán hàng?"},{"answer":"B","options":["A. Trở thành Frontend Developer","B. Trở thành Fullstack Developer chuyên nghiệp","C. Trở thành Data Scientist","D. Trở thành DevOps Engineer"],"question":"Mục tiêu nghề nghiệp của Nguyễn Quốc Tùng là gì?"}]}
+[00:06:38.850] Browser LOG     ✅ Đã nhận quiz từ API: 3 câu hỏi
+[00:06:52.868] Browser LOG     🔄 Đang tải khóa học từ API...
+[00:06:52.868] Browser LOG     🚀 Gửi request gợi ý khóa học: {"career_goal":"Fullstack Developer","profile_text":"Tên: Nguyễn Quốc Tùng\nKinh nghiệm: 2 năm lập trình Python, từng làm dự án web Flask\nHọc vấn: Đại học Công nghệ Thông tin\nKỹ năng: Python, Flask, HTML, CSS, SQL, Git, REST API\nMục tiêu: Trở thành Fullstack Developer chuyên nghiệp\nDự án đã làm:\n- Website bán hàng với Flask và MySQL\n- REST API cho ứng dụng mobile\n- Integration với payment gateway"}
+[00:06:55.129] Browser LOG     ✅ Nhận response courses: {"courses":[{"course_title":"Python for Beginners","similarity":0.09090909090909091,"text":"Python for Beginners Learn Python programming from scratch. Covers variables, loops, functions, and simple projects."},{"course_title":"Data Science with Python","similarity":0.09090909090909091,"text":"Data Science with Python Data analysis, visualization, and machine learning using Python libraries such as pandas and scikit-learn."},{"course_title":"Web Development with React","similarity":0.09090909090909091,"text":"Web Development with React Learn modern frontend development with React, hooks, components, and state management."}]}
+[00:06:55.129] Browser LOG     ✅ Đã nhận courses từ API: 3 khóa học
+[00:07:31.939] Browser LOG     🔄 Đang tạo quiz từ API...
+[00:07:31.939] Browser LOG     🚀 Gửi request tạo quiz: {"career_goal":"Fullstack Developer","profile_text":"Tên: Nguyễn Quốc Tùng\nKinh nghiệm: 2 năm lập trình Python, từng làm dự án web Flask\nHọc vấn: Đại học Công nghệ Thông tin\nKỹ năng: Python, Flask, HTML, CSS, SQL, Git, REST API\nMục tiêu: Trở thành Fullstack Developer chuyên nghiệp\nDự án đã làm:\n- Website bán hàng với Flask và MySQL\n- REST API cho ứng dụng mobile\n- Integration với payment gateway","quiz_type":"post-quiz"}
+[00:07:40.122] Browser LOG     ✅ Nhận response quiz: {"quiz":[{"answer":"B","options":["A. Java","B. Python","C. C++","D. JavaScript"],"question":"Nguyễn Quốc Tùng có kinh nghiệm lập trình với ngôn ngữ nào?"},{"answer":"B","options":["A. Django","B. Flask","C. Ruby on Rails","D. ASP.NET"],"question":"Nguyễn Quốc Tùng đã sử dụng framework nào để phát triển web?"},{"answer":"B","options":["A. Trở thành Data Scientist","B. Trở thành Fullstack Developer chuyên nghiệp","C. Trở thành DevOps Engineer","D. Trở thành Tester"],"question":"Mục tiêu nghề nghiệp của Nguyễn Quốc Tùng là gì?"}]}
+[00:07:40.122] Browser LOG     ✅ Đã nhận quiz từ API: 3 câu hỏi
