@@ -1,0 +1,54 @@
+[
+  {
+    "ProfileId": "b75a279ddda244c78f4bb237cb469345",
+    "Name": "Trinh Khac Tat",
+    "ExperienceYears": 2,
+    "ExperienceSummary": "Having more than 1 years experience in developing the website. Having experience in SQL DB system. Having experience in teamwork. Having client-facing and internal communication, written and verbal communication skills. Enthusiasm, hard-working, responsibility. Highly organized and independent. Staying calm under pressure. Interest in keeping up with new technologies.",
+    "Education": "Degree in Information Technology engineering from Hanoi University of Industry, Ha Noi, Vietnam (11-2021)",
+    "Skills": [
+      "Microsoft SQL Server",
+      "MySQL",
+      "C#",
+      "Java",
+      "PHP",
+      "C/C++",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      ".NET Framework",
+      ".NET core",
+      "Entity Framework",
+      "Bootstrap",
+      "GIT",
+      "Object Oriented Analysis (OOA)",
+      "Object Oriented Design (OOD)",
+      "Object Oriented Programming (OOP)"
+    ],
+    "CareerGoal": "",
+    "Interests": [
+      "Reading book",
+      "Sports: football",
+      "eSports"
+    ]
+  },
+  {
+    "ProfileId": "5fdd52e1b26a4bc18d56a65a3abd3719",
+    "Name": "Lưu Hải H",
+    "ExperienceYears": 1.5,
+    "ExperienceSummary": "1.5 years developing NLP models for chatbots.",
+    "Education": "University of Engineering and Technology",
+    "Skills": [
+      "Python",
+      "Transformers",
+      "LangChain",
+      "RAG",
+      "OpenAI API"
+    ],
+    "CareerGoal": "Improve chatbot accuracy and deploy scalable AI systems",
+    "Interests": [
+      "Conversational AI",
+      "embeddings",
+      "knowledge graphs"
+    ]
+  }
+]

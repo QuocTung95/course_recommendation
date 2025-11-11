@@ -1,156 +1,127 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
-interface ProfileUploadProps {
-  onComplete: (profileText: string, careerGoal: string) => void;
-}
+type NormalizedProfile = any;
 
-export default function ProfileUpload({ onComplete }: ProfileUploadProps) {
-  const [profileText, setProfileText] = useState("");
-  const [careerGoal, setCareerGoal] = useState("Backend Developer");
-  const [isLoading, setIsLoading] = useState(false);
+type Props = {
+  onComplete?: (profileText: string, career: string) => void;
+};
 
-  const careerOptions = [
-    "Backend Developer",
-    "Frontend Developer",
-    "Fullstack Developer",
-    "Data Scientist",
-    "Machine Learning Engineer",
-    "DevOps Engineer",
-    "Mobile Developer",
-  ];
+export default function ProfileUpload({ onComplete }: Props) {
+  const [file, setFile] = useState<File | null>(null);
+  const [rawText, setRawText] = useState<string>("");
+  const [normalized, setNormalized] = useState<NormalizedProfile | null>(null);
+  const [loading, setLoading] = useState(false);
+  const backendBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-  const loadSampleProfile = () => {
-    const sampleProfile = `Tên: Nguyễn Văn A
-Kinh nghiệm: 2 năm lập trình Python, từng làm dự án web Flask
-Học vấn: Đại học Công nghệ Thông tin
-Kỹ năng: Python, Flask, HTML, CSS, SQL, Git, REST API
-Mục tiêu: Trở thành Backend Developer chuyên nghiệp
-Dự án đã làm:
-- Website bán hàng với Flask và MySQL
-- REST API cho ứng dụng mobile
-- Integration với payment gateway`;
-
-    setProfileText(sampleProfile);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!profileText.trim()) {
-      alert("Vui lòng nhập nội dung profile");
-      return;
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
     }
-
-    setIsLoading(true);
-
-    // Giả lập xử lý đọc profile
-    setTimeout(() => {
-      onComplete(profileText, careerGoal);
-      setIsLoading(false);
-    }, 1000);
   };
+
+  const uploadFile = async () => {
+    if (!file) return alert("Please choose a file first");
+    setLoading(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    try {
+      const res = await axios.post(`${backendBase}/api/upload-profile`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setRawText(res.data.raw_text || "");
+      setNormalized(null);
+    } catch (err: any) {
+      alert("Upload failed: " + (err?.response?.data?.detail || err.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --------- NEW: chỉ Normalize (không lưu) ----------
+  const normalizeOnly = async () => {
+    if (!rawText) return alert("No text to normalize");
+    setLoading(true);
+    try {
+      const res = await axios.post(`${backendBase}/api/normalize-profile`, { profile_text: rawText });
+      setNormalized(res.data.normalized_profile || null);
+    } catch (err: any) {
+      alert("Normalize failed: " + (err?.response?.data?.detail || err.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --------- NEW: Save normalized JSON ----------
+  const saveNormalized = async () => {
+    if (!normalized) return alert("No normalized profile to save. Click Normalize first.");
+    setLoading(true);
+    try {
+      const res = await axios.post(`${backendBase}/api/save-profile`, { normalized_profile: normalized });
+      setNormalized(res.data.normalized_profile || null);
+      const savedPath = res.data.saved_path || "";
+      alert("Saved profile to: " + savedPath);
+      // callback if needed
+      const career = res.data.normalized_profile?.CareerGoal || "";
+      if (onComplete) onComplete(rawText, career);
+    } catch (err: any) {
+      alert("Save failed: " + (err?.response?.data?.detail || err.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---------- original combined Normalize & Save kept but commented ----------
+  // const submitEditedText = async () => {
+  //   if (!rawText) return alert("No text to submit");
+  //   setLoading(true);
+  //   try {
+  //     const res = await axios.post(`${backendBase}/api/profile-from-text`, { profile_text: rawText });
+  //     setNormalized(res.data.normalized_profile);
+  //     const career = res.data.normalized_profile?.CareerGoal || "";
+  //     if (onComplete) onComplete(rawText, career);
+  //   } catch (err: any) {
+  //     alert("Error: " + (err?.response?.data?.detail || err.message));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Thông Tin Hồ Sơ</h2>
+    <div className="p-4 max-w-3xl mx-auto">
+      <h3 className="text-lg font-semibold mb-2">Upload profile (pdf / docx / txt)</h3>
+      <input type="file" accept=".pdf,.docx,.txt" onChange={onFileChange} />
+      <div className="mt-2 flex gap-2">
+        <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={uploadFile} disabled={!file || loading}>
+          {loading ? "Uploading..." : "Upload & Scan"}
+        </button>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <div className="flex items-start">
-          <div className="text-blue-500 mr-3">💡</div>
-          <div>
-            <h3 className="font-semibold text-blue-800 mb-1">Cách hoạt động</h3>
-            <p className="text-blue-700 text-sm">
-              Hệ thống sẽ đọc thông tin từ CV/profile của bạn để gợi ý khóa học phù hợp. Hiện tại bạn có thể:
-            </p>
-            <ul className="text-blue-700 text-sm mt-2 list-disc list-inside">
-              <li>Dán nội dung profile vào ô bên dưới</li>
-              <li>Dùng profile mẫu để thử nghiệm</li>
-              <li>Chọn mục tiêu nghề nghiệp phù hợp</li>
-              <li>Sau này sẽ tích hợp đọc từ file CV (PDF/DOCX)</li>
-            </ul>
-          </div>
-        </div>
+        <button className="px-3 py-1 bg-indigo-600 text-white rounded" onClick={normalizeOnly} disabled={!rawText || loading}>
+          {loading ? "Working..." : "Normalize"}
+        </button>
+
+        <button className="px-3 py-1 bg-green-600 text-white rounded" onClick={saveNormalized} disabled={!normalized || loading}>
+          {loading ? "Saving..." : "Save"}
+        </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Career Goal Dropdown */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Mục tiêu nghề nghiệp *</label>
-          <select
-            required
-            value={careerGoal}
-            onChange={(e) => setCareerGoal(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-          >
-            {careerOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          <p className="text-sm text-gray-500 mt-1">Chọn lĩnh vực bạn muốn phát triển sự nghiệp</p>
-        </div>
+      <div className="mt-4">
+        <h4 className="font-medium">Scanned text (you can edit)</h4>
+        <textarea
+          value={rawText}
+          onChange={(e) => setRawText(e.target.value)}
+          rows={10}
+          className="w-full border p-2"
+          placeholder="Scanned content will appear here for review..."
+        />
+      </div>
 
-        {/* Profile Text Area */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Nội dung Profile/CV *</label>
-          <textarea
-            required
-            value={profileText}
-            onChange={(e) => setProfileText(e.target.value)}
-            rows={10}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm bg-white"
-            placeholder={`Nhập nội dung profile của bạn hoặc dùng profile mẫu...\n\nVí dụ:\nTên: Nguyễn Văn A\nKinh nghiệm: 2 năm Python\nHọc vấn: Đại học CNTT\nKỹ năng: Python, Flask, SQL\nMục tiêu: Backend Developer`}
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            Bao gồm: Tên, kinh nghiệm, học vấn, kỹ năng, mục tiêu nghề nghiệp
-          </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between">
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={loadSampleProfile}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
-            >
-              📝 Dùng Profile Mẫu
-            </button>
-            <button
-              type="button"
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium opacity-50 cursor-not-allowed"
-              disabled
-            >
-              📎 Tải lên CV (Coming soon)
-            </button>
-          </div>
-
-          <button
-            type="submit"
-            disabled={!profileText.trim() || isLoading}
-            className="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
-          >
-            {isLoading ? (
-              <span className="flex items-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Đang xử lý...
-              </span>
-            ) : (
-              "Tiếp tục → Pre-Quiz"
-            )}
-          </button>
-        </div>
-      </form>
-
-      {/* Profile Preview */}
-      {profileText && (
-        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-          <h3 className="font-semibold text-gray-700 mb-2">Xem trước Profile:</h3>
-          <div className="text-sm text-gray-600 whitespace-pre-line bg-white p-3 rounded border max-h-40 overflow-y-auto">
-            {profileText}
-          </div>
+      {normalized && (
+        <div className="mt-4">
+          <h4 className="font-medium">Normalized profile (JSON)</h4>
+          <pre className="bg-gray-100 p-2 rounded overflow-auto">{JSON.stringify(normalized, null, 2)}</pre>
         </div>
       )}
     </div>
