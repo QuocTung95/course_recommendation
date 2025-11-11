@@ -1,7 +1,7 @@
 import json
 import os
 
-def load_course_file(file_path="./data/courses.json"):
+def load_course_file(file_path="./shared/data/courses.json"):
     if not os.path.exists(file_path):
         print(f"Không tìm thấy file: {file_path}")
         return []
