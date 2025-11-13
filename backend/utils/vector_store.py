@@ -6,7 +6,7 @@ from .openai_client import create_embedding
 def load_vectorstore():
     """Load vectorstore từ shared folder"""
     try:
-        vectorstore_path = "../shared/vectorstore/embedded_docs.json"
+        vectorstore_path = "../vectorstore/embedded_docs.json"
         print(f"📁 Đang tải vectorstore từ: {vectorstore_path}")
 
         if not os.path.exists(vectorstore_path):

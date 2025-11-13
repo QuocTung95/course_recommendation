@@ -1,20 +1,36 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
+// components/ui/Button.tsx
+import { ReactNode } from "react";
+import { colors } from "@/theme/colors";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "success" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
+  onClick?: () => void;
+  disabled?: boolean;
+  loading?: boolean;
+  className?: string;
+  type?: "button" | "submit" | "reset";
 }
 
-export default function Button({ children, variant = "primary", size = "md", className = "", ...props }: ButtonProps) {
-  const baseClasses =
-    "font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-4";
+export default function Button({
+  children,
+  variant = "primary",
+  size = "md",
+  onClick,
+  disabled = false,
+  loading = false,
+  className = "",
+  type = "button",
+}: ButtonProps) {
+  const baseStyles =
+    "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
 
   const variants = {
-    primary: "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white",
-    secondary: "bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white",
-    success: "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white",
-    outline: "border-2 border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white",
+    primary: `bg-gradient-to-r from-[${colors.primary[500]}] to-[${colors.primary[400]}] text-white hover:shadow-lg transform hover:-translate-y-0.5 focus:ring-[${colors.primary[300]}]`,
+    secondary: `bg-[${colors.accent.purple}] text-white hover:bg-[${colors.accent.blue}] transform hover:-translate-y-0.5 focus:ring-[${colors.accent.purple}]`,
+    outline: `border-2 border-[${colors.primary[300]}] text-[${colors.primary[600]}] hover:bg-[${colors.primary[50]}] focus:ring-[${colors.primary[300]}]`,
+    ghost: `text-[${colors.primary[600]}] hover:bg-[${colors.primary[50]}] focus:ring-[${colors.primary[300]}]`,
   };
 
   const sizes = {
@@ -24,7 +40,22 @@ export default function Button({ children, variant = "primary", size = "md", cla
   };
 
   return (
-    <button className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`} {...props}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled || loading}
+      className={`
+        ${baseStyles}
+        ${variants[variant]}
+        ${sizes[size]}
+        ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+        ${className}
+      `}
+      style={{
+        boxShadow: variant === "primary" ? "0 4px 14px 0 rgba(66, 72, 116, 0.2)" : "none",
+      }}
+    >
+      {loading && <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />}
       {children}
     </button>
   );

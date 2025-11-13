@@ -1,314 +1,269 @@
-# 🎓 RAG Learning Assistant - Hệ Thống Gợi ý Khóa Học Thông Minh
+# 🎯 RAG Learning Assistant - Hệ Thống Đề Xuất Khóa Học Thông Minh
+
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Python](https://img.shields.io/badge/python-3.11+-green)
+![Next.js](https://img.shields.io/badge/next.js-14.0+-black)
 
 ## 📖 Giới Thiệu
 
-**RAG Learning Assistant** là ứng dụng AI sử dụng kỹ thuật RAG (Retrieval-Augmented Generation) để phân tích hồ sơ người dùng và gợi ý khóa học phù hợp. Hệ thống tích hợp quiz đánh giá trình độ trước và sau khi học để đo lường sự tiến bộ.
+**RAG Learning Assistant** là hệ thống AI đề xuất khóa học cá nhân hóa dựa trên phân tích CV và mục tiêu nghề nghiệp. Ứng dụng sử dụng RAG (Retrieval-Augmented Generation) kết hợp với OpenAI để tạo ra lộ trình học tập tối ưu cho từng người dùng.
 
-![RAG Learning Assistant](https://img.shields.io/badge/Status-Ready%20for%20Demo-success)
-![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20FastAPI%20%7C%20OpenAI-blue)
+## 🚀 Tính Năng Chính
 
-## ✨ Tính Năng Chính
+### 🤖 AI-Powered Analysis
 
-### 🎯 Đánh giá Trình Độ Thông Minh
+- **Phân tích CV tự động**: Extract thông tin kỹ năng, kinh nghiệm từ CV
+- **Đánh giá trình độ**: Tạo bài quiz đánh giá năng lực hiện tại
+- **Gợi ý thông minh**: Đề xuất khóa học phù hợp với profile và mục tiêu
 
-- **Pre-Quiz**: Bài kiểm tra đầu vào được tạo tự động bằng AI dựa trên profile
-- **Post-Quiz**: Bài kiểm tra sau khi học để đánh giá tiến bộ
-- **So sánh kết quả**: Theo dõi sự cải thiện qua các bài quiz
+### 📚 Personalized Learning Path
 
-### 🎓 Gợi ý Khóa Học AI-Powered
+- **Lộ trình cá nhân hóa**: Khóa học được đề xuất dựa trên phân tích AI
+- **Theo dõi tiến bộ**: Pre-quiz và Post-quiz để đo lường sự cải thiện
+- **Đa dạng lĩnh vực**: Backend, Frontend, Data Science, DevOps, v.v.
 
-- **Phân tích profile**: Đọc và phân tích CV/profile người dùng
-- **Semantic Search**: Tìm kiếm khóa học dựa trên vector embeddings
-- **Đề xuất cá nhân hóa**: Khóa học phù hợp với trình độ và mục tiêu
+### 🎯 User Experience
 
-### 🤖 Công Nghệ AI Tiên Tiến
-
-- **OpenAI GPT-4o-mini**: Tạo quiz và xử lý văn bản thông minh
-- **RAG Pipeline**: Kết hợp retrieval và generation
-- **Vector Database**: Lưu trữ và tìm kiếm embeddings
+- **Upload CV đa định dạng**: PDF, DOCX, TXT
+- **Giao diện hiện đại**: React với Tailwind CSS và Framer Motion
+- **Real-time processing**: Xử lý và phân tích dữ liệu nhanh chóng
 
 ## 🏗️ Kiến Trúc Hệ Thống
 
 ```
-course_recomendation/
-├── 📱 react/                          # Frontend React + Next.js
-│   ├── src/
-│   │   ├── app/                      # Next.js app router
-│   │   ├── components/               # UI components
-│   │   │   ├── Layout.tsx
-│   │   │   ├── ProfileUpload.tsx
-│   │   │   ├── QuizComponent.tsx
-│   │   │   └── CourseRecommendations.tsx
-│   │   └── lib/
-│   │       └── api.ts               # API client
-│   └── package.json
-├── 🐍 backend/                       # Python FastAPI Backend
-│   ├── main.py                      # FastAPI server
-│   ├── requirements.txt
-│   ├── services/                    # Business logic
-│   │   ├── quiz_service.py
-│   │   ├── course_service.py
-│   │   └── rag_service.py
-│   └── utils/
-│       ├── openai_client.py
-│       └── vector_store.py
-└── 📚 shared/                       # Shared resources
-    ├── data/
-    │   └── courses.json            # Database khóa học
-    ├── vectorstore/
-    │   └── embedded_docs.json     # Vector embeddings
-    ├── ingestion/                 # Data processing
-    │   ├── load_data.py
-    │   ├── chunking.py
-    │   └── embed_documents.py
-    └── profile.txt               # User profile mẫu
+Frontend (React) ←→ Backend (FastAPI) ←→ AI Services ←→ Vector Database
+     ↓                    ↓                    ↓              ↓
+Next.js UI          FastAPI Server      OpenAI GPT-4o    ChromaDB
+Tailwind CSS        Python 3.11+        Embeddings       Udemy Courses
 ```
 
-## 🚀 Cài Đặt & Chạy Ứng Dụng
+## 📁 Cấu Trúc Thư Mục
+
+```bash
+course_recomendation/
+├── backend/                 # FastAPI Backend
+│   ├── chroma_db/          # Vector database (ChromaDB)
+│   ├── courses_analyzer/   # Data processing scripts
+│   │   ├── data_analyzer.py    # Import courses to ChromaDB
+│   │   └── setup.py           # Setup and dependencies check
+│   ├── data/               # Raw data files
+│   │   └── UDEMY_2025.csv     # Udemy courses dataset
+│   ├── services/           # Business logic
+│   │   ├── course_service.py   # Course recommendations
+│   │   ├── profile_service.py  # CV analysis
+│   │   └── quiz_service.py     # Quiz generation
+│   ├── utils/              # Utilities
+│   │   ├── file_parser.py      # CV file parsing
+│   │   ├── openai_client.py    # OpenAI API wrapper
+│   │   └── vector_store.py     # ChromaDB operations
+│   ├── main.py            # FastAPI application
+│   └── requirements.txt   # Python dependencies
+└── react/                 # Next.js Frontend
+    ├── src/
+    │   ├── app/           # Next.js app router
+    │   ├── components/    # React components
+    │   │   ├── Layout.tsx         # Main layout
+    │   │   ├── ProfileUpload.tsx  # CV upload component
+    │   │   ├── QuizComponent.tsx  # Quiz interface
+    │   │   ├── CourseRecommendations.tsx # Course display
+    │   │   └── CompletionScreen.tsx      # Results summary
+    │   ├── lib/           # Utilities and API calls
+    │   └── theme/         # Design system
+    └── package.json       # Node.js dependencies
+```
+
+## 🔄 Workflow Chi Tiết
+
+### 1. **📄 Upload & Phân Tích CV**
+
+```python
+# Input: CV file + Career goal
+# Process: AI extract structured data
+# Output: Profile analysis JSON
+
+{
+  "extracted_skills": ["python", "flask", "sql"],
+  "experience_level": "intermediate",
+  "career_interests": ["Backend Development"],
+  "learning_goals": ["Advanced Python", "System Design"]
+}
+```
+
+### 2. **🎯 Tạo Pre-Quiz (AI Generated)**
+
+```python
+# Input: Profile analysis
+# Process: OpenAI GPT-4o generates personalized quiz
+# Output: 5 câu hỏi đánh giá
+
+{
+  "quiz": [
+    {
+      "question": "Bạn có kinh nghiệm với Python ở mức độ nào?",
+      "options": ["A. Mới bắt đầu", "B. Có chút kinh nghiệm", ...],
+      "answer": "A",
+      "purpose": "kinh_nghiem"
+    }
+  ]
+}
+```
+
+### 3. **📚 Đề Xuất Khóa Học (Vector Search)**
+
+```python
+# Input: Profile + Quiz answers + Career goal
+# Process: ChromaDB semantic search
+# Output: Top 5 courses phù hợp
+
+{
+  "courses": [
+    {
+      "course_title": "Complete Python Backend Development",
+      "similarity": 0.89,
+      "level": "Intermediate",
+      "rating": 4.6,
+      "instructor": "Expert Instructor"
+    }
+  ]
+}
+```
+
+### 4. **📝 Post-Quiz & Đánh Giá**
+
+```python
+# Input: Career goal (sau khi học)
+# Process: AI generates knowledge assessment quiz
+# Output: Quiz kiểm tra kiến thức + Progress tracking
+```
+
+## 🛠️ Cài Đặt & Chạy Ứng Dụng
 
 ### Prerequisites
 
-- Node.js 18+
 - Python 3.11+
+- Node.js 18+
 - OpenAI API key
 
-### 1. Clone và Thiết Lập
+### 1. Backend Setup
 
 ```bash
-# Clone repository (nếu có)
-git clone <repository-url>
-cd course_recomendation
-```
-
-### 2. Backend Setup
-
-```bash
-# Chuyển đến thư mục backend
 cd backend
 
 # Tạo virtual environment
 python -m venv venv
-
-# Kích hoạt virtual environment
-# Mac/Linux:
-source venv/bin/activate
-# Windows:
-# venv\Scripts\activate
+source venv/bin/activate  # Linux/Mac
+# hoặc venv\Scripts\activate  # Windows
 
 # Cài đặt dependencies
 pip install -r requirements.txt
 
 # Cấu hình environment variables
 cp .env.example .env
-# Chỉnh sửa .env với OpenAI API keys của bạn
+# Chỉnh sửa .env với OpenAI API key của bạn
+
+# Import dữ liệu khóa học vào ChromaDB
+python courses_analyzer/data_analyzer.py
+
+# Khởi động server
+python main.py
 ```
 
-### 3. Frontend Setup
+### 2. Frontend Setup
 
 ```bash
-# Chuyển đến thư mục react
-cd ../react
+cd react
 
 # Cài đặt dependencies
 npm install
 
-# Hoặc nếu dùng yarn
-yarn install
-```
-
-### 4. Chuẩn Bị Dữ Liệu
-
-```bash
-# Chuyển đến thư mục backend
-cd ../backend
-
-# Chạy script embed documents
-python -c "
-from utils.vector_store import load_vectorstore
-data = load_vectorstore()
-print(f'✅ Đã tải {len(data)} documents')
-"
-```
-
-### 5. Chạy Ứng Dụng
-
-**Terminal 1 - Backend:**
-
-```bash
-cd backend
-source venv/bin/activate
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-**Terminal 2 - Frontend:**
-
-```bash
-cd react
+# Khởi động development server
 npm run dev
 ```
 
-### 6. Truy Cập Ứng Dụng
+### 3. Truy Cập Ứng Dụng
 
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
 - **API Documentation**: http://localhost:8000/docs
 
-## 📱 Hướng Dẫn Sử Dụng
-
-### Bước 1: Nhập Thông Tin Profile
-
-- Chọn mục tiêu nghề nghiệp (Backend Developer, Data Scientist, etc.)
-- Nhập hoặc dán nội dung CV/profile
-- Có thể sử dụng profile mẫu để test
-
-### Bước 2: Làm Bài Pre-Quiz
-
-- Hệ thống tạo bài quiz tự động dựa trên profile
-- 3-5 câu hỏi về lĩnh vực đã chọn
-- Nhận kết quả và đánh giá trình độ hiện tại
-
-### Bước 3: Xem Khóa Học Được Gợi Ý
-
-- Danh sách khóa học phù hợp với profile và kết quả quiz
-- Độ tương đồng và lý do đề xuất
-- Có thể xem chi tiết từng khóa học
-
-### Bước 4: Làm Bài Post-Quiz
-
-- Bài kiểm tra kiến thức sau khi học
-- So sánh kết quả với Pre-Quiz
-- Đánh giá tiến bộ và hiệu quả học tập
-
 ## 🔧 API Endpoints
 
-### Quiz Generation
+### Core Endpoints
 
-```http
-POST /api/generate-quiz
-Content-Type: application/json
+- `POST /api/upload-profile` - Upload và parse CV
+- `POST /api/upload-and-analyze` - Upload CV + Analysis + Pre-quiz
+- `POST /api/generate-quiz` - Tạo quiz (pre/post)
+- `POST /api/recommend-courses` - Đề xuất khóa học
+- `POST /api/normalize-profile` - Phân tích profile text
 
-{
-  "profile_text": "string",
-  "career_goal": "string",
-  "quiz_type": "pre-quiz|post-quiz"
-}
+### Utility Endpoints
+
+- `GET /` - Health check
+- `GET /health` - Service status
+- `GET /docs` - Interactive API documentation
+
+## 🤖 AI Integration
+
+### OpenAI Models Used
+
+- **GPT-4o-mini**: Profile analysis & Quiz generation
+- **Text Embedding**: Course similarity search (optional)
+- **Fallback System**: Mock data khi API unavailable
+
+### Prompt Engineering
+
+```python
+# Profile Analysis Prompt
+"""
+Phân tích CV và extract: skills, experience, education, career goals...
+Trả về JSON structured data.
+"""
+
+# Quiz Generation Prompt
+"""
+Tạo quiz 5 câu dựa trên profile: đánh giá kỹ năng, kinh nghiệm, mục tiêu...
+Mỗi câu 4 lựa chọn, format JSON chuẩn.
+"""
 ```
 
-### Course Recommendations
+## 📊 Data Pipeline
 
-```http
-POST /api/recommend-courses
-Content-Type: application/json
+1. **Data Collection**: Udemy courses dataset (643+ courses)
+2. **Data Processing**: Cleaning, chunking, embedding
+3. **Vector Storage**: ChromaDB với 2452+ document chunks
+4. **Semantic Search**: Cosine similarity for course matching
+5. **Personalization**: Profile-based filtering và ranking
 
-{
-  "profile_text": "string",
-  "career_goal": "string"
-}
-```
+## 🎨 UI/UX Features
 
-### Health Check
+### Modern Design System
 
-```http
-GET /health
-GET /
-```
+- **Responsive Layout**: Mobile-first design
+- **Smooth Animations**: Framer Motion transitions
+- **Professional Color Scheme**: Purple/blue gradient theme
+- **Interactive Components**: Drag & drop, progress bars, hover effects
 
-## 🛠️ Công Nghệ Sử Dụng
+### User Journey
 
-### Frontend
+1. **Welcome** → Giới thiệu và hướng dẫn
+2. **CV Upload** → Kéo thả file hoặc nhập thủ công
+3. **Pre-Quiz** → Đánh giá trình độ hiện tại
+4. **Recommendations** → Khóa học được đề xuất
+5. **Post-Quiz** → Kiểm tra kiến thức sau khi học
+6. **Completion** → Tổng kết và tiến bộ
 
-- **Next.js 14** - React framework
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Axios** - HTTP client
+## 🔮 Roadmap & Tính Năng Tương Lai
 
-### Backend
+- [ ] **Multi-language Support**: English/Vietnamese interface
+- [ ] **Advanced Analytics**: Learning progress dashboard
+- [ ] **Social Features**: Share learning achievements
+- [ ] **Course Providers**: Integration với nhiều nền tảng
+- [ ] **Mobile App**: React Native version
+- [ ] **AI Tutor**: Interactive learning assistant
 
-- **FastAPI** - Python web framework
-- **OpenAI API** - AI capabilities
-- **Pydantic** - Data validation
-- **Uvicorn** - ASGI server
+## 🤝 Đóng Góp
 
-### AI/ML
-
-- **GPT-4o-mini** - Text generation
-- **RAG Architecture** - Retrieval-augmented generation
-- **Vector Embeddings** - Semantic search
-- **Cosine Similarity** - Similarity calculation
-
-## 🔧 Development
-
-### Thêm Khóa Học Mới
-
-Chỉnh sửa file `shared/data/courses.json`:
-
-```json
-{
-  "id": "course_001",
-  "title": "Tên khóa học",
-  "description": "Mô tả khóa học",
-  "keywords": ["keyword1", "keyword2"]
-}
-```
-
-### Tạo Embeddings Mới
-
-```bash
-cd backend
-python -c "
-from ingestion.embed_documents import embed_courses_and_save
-embed_courses_and_save()
-"
-```
-
-### Environment Variables
-
-```env
-OPENAI_API_KEY_GPT4O=your_gpt4o_key
-OPENAI_API_KEY_EMBED=your_embed_key
-OPENAI_BASE_URL=your_base_url
-OPENAI_API_KEY=your_api_key
-```
-
-## 🐛 Xử Lý Lỗi Thường Gặp
-
-### Lỗi API Connection
-
-```bash
-# Kiểm tra backend đang chạy
-curl http://localhost:8000/health
-
-# Kiểm tra CORS configuration
-```
-
-### Lỗi OpenAI API
-
-```bash
-# Kiểm tra API keys
-python -c "from utils.openai_client import test_openai_connection; test_openai_connection()"
-```
-
-### Lỗi Vectorstore
-
-```bash
-# Kiểm tra file embeddings
-python -c "from utils.vector_store import load_vectorstore; print(f'Documents: {len(load_vectorstore())}')"
-```
-
-## 📈 Roadmap & Tính Năng Tương Lai
-
-- [ ] **Đọc CV từ file** (PDF, DOCX)
-- [ ] **User authentication** và lưu lịch sử
-- [ ] **Multi-language support** (English, Vietnamese)
-- [ ] **Advanced analytics** và reporting
-- [ ] **Integration với LMS** (Learning Management System)
-- [ ] **Mobile app** (React Native)
-- [ ] **Real-time progress tracking**
-- [ ] **Social features** và learning communities
-
-## 👥 Đóng Góp
-
-Chúng tôi hoan nghênh mọi đóng góp! Hãy:
+Chúng tôi hoan nghênh mọi đóng góp! Vui lòng:
 
 1. Fork repository
 2. Tạo feature branch (`git checkout -b feature/AmazingFeature`)
@@ -320,25 +275,10 @@ Chúng tôi hoan nghênh mọi đóng góp! Hãy:
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
-## 🤝 Liên Hệ
+## 👥 Team
 
-**Project Link**: [https://github.com/yourusername/rag-learning-assistant](https://github.com/yourusername/rag-learning-assistant)
-
-**Email**: your-email@example.com
-
-## 🙏 Acknowledgments
-
-- OpenAI cho GPT-4o-mini API
-- FastAPI team cho framework tuyệt vời
-- Next.js team cho React framework
-- Cộng đồng open source
+**AI_11_HN** - Cháu Ngoan Bác Hồ 🚀
 
 ---
 
-<div align="center">
-
-**⭐ Nếu bạn thấy dự án hữu ích, hãy cho chúng tôi một star! ⭐**
-
-_"Học tập là hành trình suốt đời - hãy để AI đồng hành cùng bạn"_ 🚀
-
-</div>
+**RAG Learning Assistant** - Personalize Your Learning Journey with AI!
