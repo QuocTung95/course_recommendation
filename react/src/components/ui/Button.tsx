@@ -1,63 +1,61 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
+// components/ui/Button.tsx
+import { ReactNode } from "react";
+import { colors } from "@/theme/colors";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "success" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
+  onClick?: () => void;
+  disabled?: boolean;
+  loading?: boolean;
+  className?: string;
+  type?: "button" | "submit" | "reset";
 }
 
 export default function Button({
   children,
   variant = "primary",
   size = "md",
+  onClick,
+  disabled = false,
+  loading = false,
   className = "",
-  ...props
+  type = "button",
 }: ButtonProps) {
-  const baseClasses =
-    "font-semibold rounded-lg shadow transition-all duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2";
+  const baseStyles =
+    "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
 
-  // palette: primary/header #424874, accent #A6B1E1, card #DCD6F7, background #F4EEFF
-  const variants: Record<string, string> = {
-    primary: "text-white",
-    secondary: "text-white",
-    success: "text-white",
-    outline: "bg-transparent",
+  const variants = {
+    primary: `bg-gradient-to-r from-[${colors.primary[500]}] to-[${colors.primary[400]}] text-white hover:shadow-lg transform hover:-translate-y-0.5 focus:ring-[${colors.primary[300]}]`,
+    secondary: `bg-[${colors.accent.purple}] text-white hover:bg-[${colors.accent.blue}] transform hover:-translate-y-0.5 focus:ring-[${colors.accent.purple}]`,
+    outline: `border-2 border-[${colors.primary[300]}] text-[${colors.primary[600]}] hover:bg-[${colors.primary[50]}] focus:ring-[${colors.primary[300]}]`,
+    ghost: `text-[${colors.primary[600]}] hover:bg-[${colors.primary[50]}] focus:ring-[${colors.primary[300]}]`,
   };
 
-  const sizes: Record<string, string> = {
+  const sizes = {
     sm: "px-4 py-2 text-sm",
     md: "px-6 py-3 text-base",
     lg: "px-8 py-4 text-lg",
   };
 
-  // Inline styles to ensure exact palette colors and hover behavior for older setups
-  const style: React.CSSProperties =
-    variant === "primary"
-      ? { backgroundColor: "#424874" }
-      : variant === "secondary"
-      ? { backgroundColor: "#A6B1E1", color: "#424874" }
-      : variant === "success"
-      ? { backgroundColor: "#A6B1E1", color: "#424874" }
-      : { border: "1px solid #A6B1E1", color: "#424874" };
-
   return (
     <button
-      {...props}
-      className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
-      style={style}
-      onMouseEnter={(e) => {
-        if (variant === "primary")
-          e.currentTarget.style.backgroundColor = "#A6B1E1";
-        else if (variant === "outline")
-          e.currentTarget.style.backgroundColor = "#DCD6F7";
-      }}
-      onMouseLeave={(e) => {
-        if (variant === "primary")
-          e.currentTarget.style.backgroundColor = "#424874";
-        else if (variant === "outline")
-          e.currentTarget.style.backgroundColor = "transparent";
+      type={type}
+      onClick={onClick}
+      disabled={disabled || loading}
+      className={`
+        ${baseStyles}
+        ${variants[variant]}
+        ${sizes[size]}
+        ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+        ${className}
+      `}
+      style={{
+        boxShadow: variant === "primary" ? "0 4px 14px 0 rgba(66, 72, 116, 0.2)" : "none",
       }}
     >
+      {loading && <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />}
       {children}
     </button>
   );

@@ -1,6 +1,0 @@
-Tên: Nguyễn Văn A
-Kinh nghiệm: 2 năm lập trình Python, từng làm dự án web Flask
-Học vấn: Đại học Công nghệ
-Kỹ năng: Python, SQL, Web, Git
-Mục tiêu: Trở thành Backend Developer
-Sở thích: Công nghệ mới, đọc sách kỹ thuật

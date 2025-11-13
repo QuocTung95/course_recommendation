@@ -1,64 +1,34 @@
+// components/ui/Card.tsx
 import { ReactNode } from "react";
+import { colors, shadows } from "@/theme/colors";
 
 interface CardProps {
   children: ReactNode;
   className?: string;
   hover?: boolean;
-  as?: "div" | "button" | "article";
-  onClick?: () => void;
+  padding?: "sm" | "md" | "lg";
 }
 
-export default function Card({
-  children,
-  className = "",
-  hover = false,
-  as = "div",
-  onClick,
-}: CardProps) {
-  // Make Card neutral: pages decide background color from palette
-  const baseClasses =
-    "rounded-2xl shadow-lg transition-all duration-300 focus:outline-none";
-  const hoverClasses = hover ? "hover:shadow-xl hover:-translate-y-1" : "";
-  const focusClasses = "focus:ring-2 focus:ring-offset-1";
-
-  const classes =
-    `${baseClasses} ${hoverClasses} ${focusClasses} ${className}`.trim();
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (!onClick) return;
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onClick();
-    }
+export default function Card({ children, className = "", hover = false, padding = "md" }: CardProps) {
+  const paddings = {
+    sm: "p-4",
+    md: "p-6",
+    lg: "p-8",
   };
-
-  if (as === "button") {
-    return (
-      <button type="button" className={classes} onClick={onClick}>
-        {children}
-      </button>
-    );
-  }
-
-  if (as === "article") {
-    return (
-      <article
-        className={classes}
-        onClick={onClick}
-        tabIndex={onClick ? 0 : undefined}
-        onKeyDown={onClick ? handleKeyPress : undefined}
-      >
-        {children}
-      </article>
-    );
-  }
 
   return (
     <div
-      className={classes}
-      onClick={onClick}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? handleKeyPress : undefined}
+      className={`
+        rounded-2xl border border-[${colors.primary[200]}]
+        bg-white/80 backdrop-blur-sm
+        ${paddings[padding]}
+        ${hover ? "transition-all duration-300 hover:shadow-lg hover:scale-[1.02]" : ""}
+        ${className}
+      `}
+      style={{
+        boxShadow: shadows.base,
+        background: "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%)",
+      }}
     >
       {children}
     </div>

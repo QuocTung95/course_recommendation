@@ -1,76 +1,129 @@
+# utils/openai_client.py
 import os
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
+import logging
 
-# Load .env từ thư mục backend
+# Load environment variables
 load_dotenv()
 
-def get_api_key(key_name):
-    """Lấy API key và in ra để debug"""
-    key = os.getenv(key_name)
-    print(f"🔑 {key_name}: {'✅' if key else '❌'} {'Có' if key else 'Không có'}")
-    return key
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Debug: In tất cả biến môi trường
-print("=" * 50)
-print("🔍 KIỂM TRA BIẾN MÔI TRƯỜNG:")
-api_key_gpt4o = get_api_key("OPENAI_API_KEY_GPT4O")
-api_key_embed = get_api_key("OPENAI_API_KEY_EMBED")
-base_url = get_api_key("OPENAI_BASE_URL")
-print("=" * 50)
+class OpenAIClient:
+    def __init__(self):
+        self._init_client()
 
-# Cấu hình OpenAI cho phiên bản cũ
-try:
-    # Phiên bản 0.28.1 dùng openai.api_key thay vì Client
-    openai.api_key = api_key_gpt4o or api_key_embed
+    def _init_client(self):
+        """Initialize OpenAI client với các API key có sẵn"""
+        try:
+            # Ưu tiên các API key từ .env của bạn
+            api_key = (
+                os.getenv("OPENAI_API_KEY_GPT4O") or
+                os.getenv("OPENAI_API_KEY_EMBED") or
+                os.getenv("OPENAI_API_KEY")  # Fallback
+            )
 
-    if base_url:
-        openai.api_base = base_url
+            base_url = os.getenv("OPENAI_BASE_URL")
 
-    print("✅ Cấu hình OpenAI thành công!")
+            if not api_key:
+                logger.error("❌ Không tìm thấy OpenAI API key trong environment variables")
+                logger.info("🔍 Kiểm tra các biến môi trường:")
+                logger.info(f"   OPENAI_API_KEY_GPT4O: {'✅' if os.getenv('OPENAI_API_KEY_GPT4O') else '❌'}")
+                logger.info(f"   OPENAI_API_KEY_EMBED: {'✅' if os.getenv('OPENAI_API_KEY_EMBED') else '❌'}")
+                logger.info(f"   OPENAI_API_KEY: {'✅' if os.getenv('OPENAI_API_KEY') else '❌'}")
+                raise ValueError("OpenAI API key is required")
 
-except Exception as e:
-    print(f"❌ Lỗi cấu hình OpenAI: {e}")
-    exit(1)
+            self.client = OpenAI(
+                api_key=api_key,
+                base_url=base_url
+            )
+
+            logger.info("✅ OpenAI client initialized successfully")
+
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize OpenAI client: {e}")
+            self.client = None
+
+    def test_connection(self):
+        """Test connection to OpenAI"""
+        if not self.client:
+            logger.error("❌ OpenAI client not initialized")
+            return False
+
+        try:
+            logger.info("🔄 Testing OpenAI connection...")
+            response = self.client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": "Say 'Hello' in Vietnamese"}],
+                max_tokens=10
+            )
+            logger.info(f"✅ OpenAI connection test passed: {response.choices[0].message.content}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ OpenAI connection test failed: {e}")
+            return False
+
+    def chat_completion(self, messages, model="gpt-4o-mini", temperature=0.7):
+        """Generate chat completion với error handling"""
+        if not self.client:
+            logger.error("❌ OpenAI client not available")
+            return None
+
+        try:
+            response = self.client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature
+            )
+            return response
+        except Exception as e:
+            logger.error(f"❌ Chat completion error: {e}")
+            return None
+
+    def create_embedding(self, text, model="text-embedding-3-small"):
+        """Create embeddings với error handling"""
+        if not self.client:
+            logger.error("❌ OpenAI client not available")
+            return None
+
+        try:
+            # Truncate very long texts
+            if len(text) > 8000:
+                text = text[:8000]
+                logger.warning("Text truncated for embedding")
+
+            response = self.client.embeddings.create(
+                model=model,
+                input=text
+            )
+            return response.data[0].embedding
+        except Exception as e:
+            logger.error(f"❌ Embedding error: {e}")
+            return None
+
+# Global instance - KHÔNG khởi tạo ngay để tránh lỗi khi import
+openai_client = None
+
+def get_openai_client():
+    """Lazy initialization của OpenAI client"""
+    global openai_client
+    if openai_client is None:
+        openai_client = OpenAIClient()
+    return openai_client
 
 def test_openai_connection():
-    """Kiểm tra kết nối OpenAI - phiên bản cũ"""
-    try:
-        print("🔄 Đang kiểm tra kết nối OpenAI...")
-        # Phiên bản cũ dùng openai.Model.list()
-        response = openai.Model.list()
-        print(f"✅ Kết nối thành công! Có {len(response['data'])} models")
+    """Test connection (legacy function)"""
+    client = get_openai_client()
+    return client.test_connection()
 
-        # In ra 3 models đầu tiên để debug
-        for model in response['data'][:3]:
-            print(f"   - {model['id']}")
-        return True
-    except Exception as e:
-        print(f"❌ Lỗi kết nối OpenAI: {e}")
-        return False
-
-# Các hàm helper cho phiên bản cũ
 def chat_completion(messages, model="gpt-4o-mini", temperature=0.7):
-    """Wrapper cho chat completion phiên bản cũ"""
-    try:
-        response = openai.ChatCompletion.create(
-            model=model,
-            messages=messages,
-            temperature=temperature
-        )
-        return response
-    except Exception as e:
-        print(f"❌ Lỗi chat completion: {e}")
-        return None
+    """Legacy chat completion function"""
+    client = get_openai_client()
+    return client.chat_completion(messages, model, temperature)
 
 def create_embedding(text, model="text-embedding-3-small"):
-    """Wrapper cho embedding phiên bản cũ"""
-    try:
-        response = openai.Embedding.create(
-            model=model,
-            input=text
-        )
-        return response
-    except Exception as e:
-        print(f"❌ Lỗi tạo embedding: {e}")
-        return None
+    """Legacy embedding function"""
+    client = get_openai_client()
+    return client.create_embedding(text, model)

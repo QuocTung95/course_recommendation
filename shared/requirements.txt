@@ -1,9 +1,0 @@
-fastapi
-uvicorn[standard]
-openai
-chromadb
-python-dotenv
-numpy
-tqdm
-pypdf
-markdown2
