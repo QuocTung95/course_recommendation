@@ -2,10 +2,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MdRocketLaunch, MdSchool, MdTrendingUp, MdAutoAwesome } from "react-icons/md";
+import {
+  MdRocketLaunch,
+  MdFolder,
+  MdSchool,
+  MdTrendingUp,
+  MdAutoAwesome,
+} from "react-icons/md";
 import Button from "./ui/Button";
-import Card from "./ui/Card";
-import { colors } from "@/theme/colors";
+import { colors, gradients, shadows } from "@/theme/colors";
 
 interface WelcomeScreenProps {
   onGetStarted: () => void;
@@ -16,55 +21,206 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
     {
       icon: <MdAutoAwesome className="w-6 h-6" />,
       title: "AI-Powered Analysis",
-      description: "Phân tích CV thông minh với AI để hiểu rõ kỹ năng và kinh nghiệm của bạn",
+      description:
+        "Phân tích CV thông minh với AI để hiểu rõ kỹ năng và kinh nghiệm của bạn",
     },
     {
       icon: <MdSchool className="w-6 h-6" />,
       title: "Personalized Learning Path",
-      description: "Lộ trình học tập được thiết kế riêng dựa trên mục tiêu nghề nghiệp",
+      description:
+        "Lộ trình học tập được thiết kế riêng dựa trên mục tiêu nghề nghiệp",
     },
     {
       icon: <MdTrendingUp className="w-6 h-6" />,
       title: "Progress Tracking",
-      description: "Theo dõi tiến bộ với Pre-Quiz và Post-Quiz để đo lường sự cải thiện",
+      description:
+        "Theo dõi tiến bộ với Pre-Quiz và Post-Quiz để đo lường sự cải thiện",
     },
   ];
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Hero Section */}
+      {/* Hero */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-16"
+        initial="hidden"
+        animate="show"
+        variants={{
+          show: { transition: { staggerChildren: 0.08 } },
+        }}
+        className="mb-8"
       >
-        <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/80 backdrop-blur-sm border border-[${colors.primary[200]}] shadow-sm mb-6">
-          <div className="w-2 h-2 bg-[${colors.accent.purple}] rounded-full animate-pulse" />
-          <span className="text-sm font-semibold text-[${colors.primary[600]}]">AI Learning Assistant</span>
-        </div>
+        <motion.section
+          variants={{
+            hidden: { opacity: 0, y: 10 },
+            show: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.6 },
+            },
+          }}
+          className="mx-auto relative rounded-2xl overflow-hidden"
+          style={{
+            maxWidth: 1120,
+            padding: "46px 32px",
+            background: gradients.hero,
+            boxShadow: shadows.glow,
+            borderRadius: 20,
+          }}
+          aria-labelledby="welcome-title"
+        >
+          {/* decorative overlays: dot matrix + soft wave */}
+          <svg
+            aria-hidden
+            style={{ position: "absolute", left: -40, top: -30, opacity: 0.06 }}
+            width="420"
+            height="260"
+            viewBox="0 0 420 260"
+            fill="none"
+          >
+            <defs>
+              <linearGradient id="lg-w" x1="0" x2="1">
+                <stop offset="0" stopColor="#ffffff" stopOpacity="0.08" />
+                <stop offset="1" stopColor="#ffffff" stopOpacity="0.02" />
+              </linearGradient>
+            </defs>
+            <rect width="420" height="260" fill="url(#lg-w)" />
+            <g fill="rgba(255,255,255,0.03)">
+              {/* dot grid */}
+              {[...Array(10)].map((_, r) => (
+                <g key={r} transform={`translate(${r * 42},0)`}>
+                  {[...Array(6)].map((_, c) => (
+                    <circle key={c} cx={c * 42} cy={r * 26} r={1.6} />
+                  ))}
+                </g>
+              ))}
+            </g>
+          </svg>
 
-        <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[${colors.primary[600]}] to-[${colors.accent.purple}] bg-clip-text text-transparent">
-          Khám phá lộ trình học tập
-          <br />
-          <span className="text-[${colors.primary[500]}]">cá nhân hóa</span>
-        </h1>
+          {/* subtle chip shape at top-right */}
+          <svg
+            aria-hidden
+            style={{
+              position: "absolute",
+              right: -24,
+              top: -12,
+              opacity: 0.07,
+            }}
+            width="260"
+            height="160"
+            viewBox="0 0 260 160"
+            fill="none"
+          >
+            <path
+              d="M0 80 C60 0, 200 0, 260 80 L260 160 L0 160 Z"
+              fill="white"
+            />
+          </svg>
 
-        <p className="text-xl text-[${colors.neutral[600]}] max-w-2xl mx-auto mb-8 leading-relaxed">
-          Từ CV đến thành thạo - Hệ thống AI của chúng tôi phân tích profile và đề xuất khóa học phù hợp nhất với mục
-          tiêu nghề nghiệp của bạn.
-        </p>
+          {/* NEW: large illustrative AI robot/chip on left for vibe */}
+          <svg
+            aria-hidden
+            style={{
+              position: "absolute",
+              left: 24,
+              top: 24,
+              opacity: 0.07,
+              pointerEvents: "none",
+            }}
+            width="220"
+            height="220"
+            viewBox="0 0 220 220"
+            fill="none"
+          >
+            {/* stylized robot / chip */}
+            <rect x="12" y="12" width="196" height="196" rx="28" fill="white" />
+            <g
+              transform="translate(34,34)"
+              stroke="rgba(0,0,0,0.06)"
+              strokeWidth="4"
+            >
+              <rect x="0" y="0" width="132" height="132" rx="18" fill="none" />
+              <circle cx="22" cy="22" r="10" fill="rgba(0,0,0,0.06)" />
+              <path d="M10 70h112M10 90h112M30 30v80" strokeLinecap="round" />
+            </g>
+          </svg>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button size="lg" onClick={onGetStarted} className="group">
-            <MdRocketLaunch className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-            Bắt Đầu Hành Trình
-          </Button>
+          <div
+            style={{
+              maxWidth: 960,
+              margin: "0 auto",
+              textAlign: "center",
+              color: "#fff",
+              position: "relative",
+              zIndex: 2,
+            }}
+          >
+            {/* small badge */}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "6px 14px",
+                borderRadius: 999,
+                background: "rgba(255,255,255,0.08)",
+                marginBottom: 12,
+              }}
+            >
+              <strong style={{ fontSize: 13 }}>AI Learning Assistant</strong>
+            </div>
 
-          <Button variant="outline" size="lg" onClick={onGetStarted}>
-            Tải CV Lên Ngay
-          </Button>
-        </div>
+            <h1
+              id="welcome-title"
+              style={{
+                fontSize: 44,
+                lineHeight: 1.02,
+                margin: "10px 0 22px",
+                fontWeight: 900,
+              }}
+            >
+              Khám phá vùng trời tri thức — lộ trình học cá nhân hóa bằng AI
+            </h1>
+
+            <p
+              style={{
+                maxWidth: 820,
+                margin: "0 auto 28px",
+                fontSize: 16,
+                opacity: 0.95,
+              }}
+            >
+              Phân tích CV bằng AI, tạo Pre-Quiz tùy chỉnh và đề xuất khóa học
+              phù hợp — bắt đầu hành trình học tập thông minh ngay hôm nay.
+            </p>
+
+            {/* SINGLE MAIN CTA - centered and prominent */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 8,
+              }}
+            >
+              <Button
+                size="lg"
+                variant="primary"
+                onClick={onGetStarted}
+                className="cta-hero"
+              >
+                <MdRocketLaunch size={22} />{" "}
+                <span style={{ marginLeft: 12 }}>Phân Tích & Tiếp Tục</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* hero CTA styles */}
+          <style>{`
+            .cta-hero { border-radius: 32px; }
+            .cta-hero:hover { cursor: pointer; }
+            @media (max-width: 640px) { h1 { font-size: 28px !important; } .cta-hero { padding-left: 28px !important; padding-right: 28px !important; } }
+          `}</style>
+        </motion.section>
       </motion.div>
 
       {/* Features Grid */}
@@ -76,23 +232,58 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
           >
-            <Card hover padding="lg" className="h-full text-center">
-              <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[${colors.primary[100]}] to-[${colors.primary[200]}] flex items-center justify-center text-[${colors.primary[600]}]">
+            <div
+              style={{
+                padding: "24px",
+                borderRadius: 12,
+                background: "rgba(255,255,255,0.1)",
+                backdropFilter: "blur(8px)",
+                border: `1px solid ${colors.neutral[200]}`,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                transition: "transform 0.3s",
+                margin: 20,
+              }}
+              className="hover:scale-[1.02] cursor-pointer"
+            >
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  margin: "0 auto 12px",
+                  borderRadius: 12,
+                  background: `linear-gradient(135deg, ${colors.primary[100]}, ${colors.primary[200]})`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: colors.primary[600],
+                }}
+              >
                 {feature.icon}
               </div>
-              <h3 className="text-lg font-semibold text-[${colors.primary[700]}] mb-2">{feature.title}</h3>
-              <p className="text-[${colors.neutral[600]}] text-sm leading-relaxed">{feature.description}</p>
-            </Card>
+              <h3
+                style={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  color: colors.primary[700],
+                  marginBottom: 8,
+                }}
+              >
+                {feature.title}
+              </h3>
+              <p style={{ color: colors.neutral[600], fontSize: 14 }}>
+                {feature.description}
+              </p>
+            </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Stats Section */}
+      {/* Stats Section (no template strings) */}
       <motion.div
+        className="text-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="text-center"
       >
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
           {[
@@ -100,10 +291,19 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
             { number: "10K+", label: "Người dùng" },
             { number: "95%", label: "Hài lòng" },
             { number: "2.5x", label: "Tiến bộ" },
-          ].map((stat, index) => (
+          ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-[${colors.primary[600]}] mb-1">{stat.number}</div>
-              <div className="text-sm text-[${colors.neutral[500]}]">{stat.label}</div>
+              <div
+                style={{
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: colors.primary[600],
+                  marginBottom: 6,
+                }}
+              >
+                {stat.number}
+              </div>
+              <div style={{ color: colors.neutral[500] }}>{stat.label}</div>
             </div>
           ))}
         </div>

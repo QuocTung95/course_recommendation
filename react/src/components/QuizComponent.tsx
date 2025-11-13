@@ -3,6 +3,9 @@
 import { api } from "@/lib/api";
 import { useState, useEffect } from "react";
 import { MdEmojiEvents, MdReplay } from "react-icons/md";
+import FullScreenLoader from "./ui/FullScreenLoader";
+import Button from "./ui/Button";
+import { colors } from "@/theme/colors";
 
 interface QuizQuestion {
   question: string;
@@ -33,6 +36,7 @@ export default function QuizComponent({
   // Transition / animation state
   const [transitioning, setTransitioning] = useState(false);
   const [loadingDots, setLoadingDots] = useState(0);
+  const [hoveredOption, setHoveredOption] = useState<number | null>(null); // NEW
 
   // Mock data - will be used as fallback
   const mockQuizQuestions: QuizQuestion[] = [
@@ -164,65 +168,7 @@ export default function QuizComponent({
       : "Post-Quiz - Kiểm tra sau khi học";
 
   if (isLoading) {
-    // Loading with dots animation and dynamic text
-    const dots = ".".repeat(loadingDots);
-    return (
-      <div className="text-center py-12">
-        <div
-          style={{
-            margin: "0 auto 12px",
-            width: 72,
-            height: 72,
-            borderRadius: 12,
-            background: "#DCD6F7",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div style={{ display: "flex", gap: 6 }}>
-            <div
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 6,
-                background: "#424874",
-                animation: "jump .9s infinite",
-              }}
-            />
-            <div
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 6,
-                background: "#424874",
-                animation: "jump .9s .15s infinite",
-              }}
-            />
-            <div
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 6,
-                background: "#424874",
-                animation: "jump .9s .3s infinite",
-              }}
-            />
-          </div>
-        </div>
-
-        <h3 style={{ color: "#424874", fontWeight: 700, marginTop: 12 }}>
-          Hệ thống đang tạo đề kiểm tra phù hợp với hồ sơ của bạn{dots}
-        </h3>
-        <p style={{ color: "#424874", opacity: 0.9, marginTop: 8 }}>
-          Quá trình được tối ưu bằng AI — vui lòng chờ trong giây lát
-        </p>
-
-        <style>{`
-          @keyframes jump { 0% { transform: translateY(0);} 50% { transform: translateY(-8px);} 100% { transform: translateY(0);} }
-        `}</style>
-      </div>
-    );
+    return <FullScreenLoader message="Đang tạo đề kiểm tra ..." />;
   }
 
   if (showResult) {
@@ -372,11 +318,11 @@ export default function QuizComponent({
         </div>
       </div>
 
-      {/* Progress bar animated */}
+      {/* Progress bar animated - use theme blue instead of purple */}
       <div
         style={{
           width: "100%",
-          backgroundColor: "#DCD6F7",
+          backgroundColor: colors.primary[100], // was purple
           height: 8,
           borderRadius: 999,
           marginBottom: 16,
@@ -386,7 +332,7 @@ export default function QuizComponent({
           style={{
             width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%`,
             height: "100%",
-            backgroundColor: "#A6B1E1",
+            backgroundColor: colors.primary[400], // stronger blue fill
             borderRadius: 999,
             transition: "width .5s ease",
           }}
@@ -396,8 +342,8 @@ export default function QuizComponent({
       {/* Question with slide/fade */}
       <div
         style={{
-          backgroundColor: "#F4EEFF",
-          border: "1px solid #A6B1E1",
+          backgroundColor: colors.primary[50],
+          border: `1px solid ${colors.primary[100]}`,
           borderRadius: 10,
           padding: 16,
           marginBottom: 16,
@@ -405,7 +351,13 @@ export default function QuizComponent({
         }}
       >
         <div style={questionAnimStyle(!transitioning)}>
-          <h3 style={{ color: "#424874", fontWeight: 700, marginBottom: 12 }}>
+          <h3
+            style={{
+              color: colors.primary[700],
+              fontWeight: 700,
+              marginBottom: 12,
+            }}
+          >
             {currentQ.question}
           </h3>
 
@@ -413,37 +365,57 @@ export default function QuizComponent({
             {currentQ.options.map((option, index) => {
               const optKey = option.charAt(0);
               const isSelected = selectedAnswer === optKey;
+              const isHovered = hoveredOption === index; // NEW
+              // compute dynamic colors
+              const optionBg = isSelected
+                ? colors.primary[300]
+                : isHovered
+                ? colors.primary[100]
+                : colors.primary[50];
+              const optionBorder = isSelected
+                ? colors.primary[400]
+                : isHovered
+                ? colors.primary[300]
+                : colors.primary[100];
+              const badgeBg = isSelected
+                ? colors.primary[600]
+                : colors.primary[100];
+              const badgeColor = isSelected ? "#fff" : colors.primary[700];
+
               return (
                 <button
                   key={index}
                   onClick={() => handleAnswerSelect(optKey)}
                   aria-pressed={isSelected}
+                  onMouseEnter={() => setHoveredOption(index)} // NEW
+                  onMouseLeave={() => setHoveredOption(null)} // NEW
                   style={{
                     display: "flex",
                     gap: 12,
                     alignItems: "center",
                     padding: 12,
-                    borderRadius: 8,
-                    border: `1px solid ${isSelected ? "#424874" : "#A6B1E1"}`,
-                    backgroundColor: isSelected ? "#A6B1E1" : "#F4EEFF",
-                    color: "#424874",
+                    borderRadius: 12,
+                    border: `1px solid ${optionBorder}`,
+                    backgroundColor: optionBg,
+                    color: colors.primary[800],
                     textAlign: "left",
                     boxShadow: isSelected
-                      ? "0 6px 18px rgba(66,72,116,0.12)"
+                      ? "0 6px 18px rgba(50,82,145,0.12)"
                       : "none",
                     transition: "all .18s ease",
+                    cursor: "pointer",
                   }}
                 >
                   <div
                     style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 18,
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      backgroundColor: isSelected ? "#424874" : "#DCD6F7",
-                      color: isSelected ? "#fff" : "#424874",
+                      backgroundColor: badgeBg,
+                      color: badgeColor,
                       fontWeight: 700,
                     }}
                   >
@@ -457,42 +429,33 @@ export default function QuizComponent({
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation (use Button for consistent styling) */}
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <button
+        <Button
+          variant="outline"
+          size="md"
           onClick={() =>
             currentQuestion > 0 && setCurrentQuestion(currentQuestion - 1)
           }
           disabled={currentQuestion === 0}
-          style={{
-            padding: "10px 14px",
-            borderRadius: 8,
-            border: "1px solid #A6B1E1",
-            backgroundColor: "#F4EEFF",
-            color: "#424874",
-            opacity: currentQuestion === 0 ? 0.6 : 1,
-          }}
         >
           ← Câu trước
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="primary"
+          size="md"
           onClick={goToNext}
           disabled={!selectedAnswer}
-          style={{
-            padding: "10px 18px",
-            borderRadius: 12,
-            backgroundColor: "#424874",
-            color: "#fff",
-            opacity: !selectedAnswer ? 0.6 : 1,
-            boxShadow: "0 8px 24px rgba(66,72,116,0.12)",
-          }}
         >
           {currentQuestion === quizQuestions.length - 1
             ? "Kết thúc →"
             : "Câu tiếp theo →"}
-        </button>
+        </Button>
       </div>
+
+      {/* no external hover CSS needed because hover handled inline via hoveredOption */}
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }

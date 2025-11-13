@@ -8,6 +8,9 @@ import QuizComponent from "../components/QuizComponent";
 import CourseRecommendations from "../components/CourseRecommendations";
 import CompletionScreen from "../components/CompletionScreen";
 import WelcomeScreen from "../components/WelcomeScreen";
+import { MdRocketLaunch, MdFolder, MdSchool } from "react-icons/md";
+import { colors, gradients } from "@/theme/colors";
+import Button from "../components/ui/Button";
 
 export default function Home() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -23,7 +26,11 @@ export default function Home() {
   } | null>(null);
   const [profileAnalysis, setProfileAnalysis] = useState<any>(null);
 
-  const handleProfileComplete = (profileText: string, career: string, analysis?: any) => {
+  const handleProfileComplete = (
+    profileText: string,
+    career: string,
+    analysis?: any
+  ) => {
     setUserProfile(profileText);
     setCareerGoal(career);
     setProfileAnalysis(analysis);
@@ -60,6 +67,7 @@ export default function Home() {
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
+        // Show the full Welcome hero (imported component). WelcomeScreen will call onGetStarted
         return <WelcomeScreen onGetStarted={() => setCurrentStep(1)} />;
 
       case 1:
@@ -114,7 +122,7 @@ export default function Home() {
 
   return (
     <Layout currentStep={currentStep} totalSteps={5}>
-      <div className="min-h-screen">{renderStepContent()}</div>
+      <div className="">{renderStepContent()}</div>
     </Layout>
   );
 }

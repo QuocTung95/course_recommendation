@@ -1,6 +1,6 @@
 // components/ui/Button.tsx
-import { ReactNode } from "react";
-import { colors } from "@/theme/colors";
+import { ReactNode, useState } from "react";
+import { colors, gradients } from "@/theme/colors";
 
 interface ButtonProps {
   children: ReactNode;
@@ -23,40 +23,94 @@ export default function Button({
   className = "",
   type = "button",
 }: ButtonProps) {
+  const [hover, setHover] = useState(false);
+
   const baseStyles =
-    "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+    "inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none";
 
-  const variants = {
-    primary: `bg-gradient-to-r from-[${colors.primary[500]}] to-[${colors.primary[400]}] text-white hover:shadow-lg transform hover:-translate-y-0.5 focus:ring-[${colors.primary[300]}]`,
-    secondary: `bg-[${colors.accent.purple}] text-white hover:bg-[${colors.accent.blue}] transform hover:-translate-y-0.5 focus:ring-[${colors.accent.purple}]`,
-    outline: `border-2 border-[${colors.primary[300]}] text-[${colors.primary[600]}] hover:bg-[${colors.primary[50]}] focus:ring-[${colors.primary[300]}]`,
-    ghost: `text-[${colors.primary[600]}] hover:bg-[${colors.primary[50]}] focus:ring-[${colors.primary[300]}]`,
+  // Standardized sizes and exact paddings
+  const sizesMap: Record<
+    string,
+    { cls: string; radius: number; padding: string }
+  > = {
+    sm: { cls: "text-sm", radius: 20, padding: "12px 32px" }, // compact
+    md: { cls: "text-base", radius: 28, padding: "24px 56px" }, // requested default
+    lg: { cls: "text-lg", radius: 36, padding: "28px 72px" }, // large CTA
   };
 
-  const sizes = {
-    sm: "px-4 py-2 text-sm",
-    md: "px-6 py-3 text-base",
-    lg: "px-8 py-4 text-lg",
+  const s = sizesMap[size];
+
+  const commonStyle: React.CSSProperties = {
+    borderRadius: s.radius,
+    padding: s.padding, // exact padding per spec
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 14,
+    fontWeight: 800,
+    transform: hover ? "translateY(-3px) scale(1.02)" : undefined,
+    boxShadow: hover
+      ? "0 28px 80px rgba(50,130,184,0.18)"
+      : "0 8px 24px rgba(16,24,40,0.06)",
+    transition: "all 180ms ease",
+    cursor: disabled ? "not-allowed" : "pointer",
+    outline: "none",
+    color:
+      variant === "primary" || variant === "secondary"
+        ? "#fff"
+        : colors.primary[600],
   };
+
+  const variantStyle: React.CSSProperties =
+    variant === "primary"
+      ? { background: gradients.primary, border: "none" }
+      : variant === "secondary"
+      ? {
+          background:
+            "linear-gradient(90deg, rgba(166,177,225,1) 0%, rgba(146,168,223,1) 100%)",
+          border: "none",
+        }
+      : variant === "outline"
+      ? {
+          background: "transparent",
+          color: colors.primary[600],
+          border: `2px solid ${colors.primary[300]}`,
+        }
+      : {
+          background: "transparent",
+          color: colors.primary[600],
+          border: "none",
+        };
 
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`
-        ${baseStyles}
-        ${variants[variant]}
-        ${sizes[size]}
-        ${disabled ? "opacity-50 cursor-not-allowed" : ""}
-        ${className}
-      `}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      className={`${baseStyles} ${s.cls} ${className}`}
       style={{
-        boxShadow: variant === "primary" ? "0 4px 14px 0 rgba(66, 72, 116, 0.2)" : "none",
+        ...commonStyle,
+        ...(variantStyle as React.CSSProperties),
+        opacity: disabled ? 0.6 : 1,
       }}
+      aria-disabled={disabled || loading}
     >
-      {loading && <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />}
+      {loading && (
+        <div
+          style={{
+            marginRight: 12,
+            width: 20,
+            height: 20,
+            borderRadius: 999,
+            border: "3px solid rgba(255,255,255,0.9)",
+            borderTopColor: "transparent",
+            animation: "spin 0.9s linear infinite",
+          }}
+        />
+      )}
       {children}
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </button>
   );
 }

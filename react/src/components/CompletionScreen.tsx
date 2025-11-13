@@ -2,11 +2,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MdEmojiEvents, MdTrendingUp, MdReplay, MdSchool, MdShare } from "react-icons/md";
+import {
+  MdEmojiEvents,
+  MdTrendingUp,
+  MdReplay,
+  MdSchool,
+  MdShare,
+} from "react-icons/md";
 import { FiAward, FiTarget, FiBarChart2 } from "react-icons/fi";
 import Button from "./ui/Button";
 import Card from "./ui/Card";
-import { colors } from "@/theme/colors";
+import { colors, gradients } from "@/theme/colors";
+import type { ReactNode } from "react";
 
 interface CompletionScreenProps {
   preQuizScore: { score: number; total: number } | null;
@@ -21,18 +28,51 @@ export default function CompletionScreen({
   onRestart,
   onViewCourses,
 }: CompletionScreenProps) {
-  const preScore = preQuizScore ? Math.round((preQuizScore.score / preQuizScore.total) * 100) : 0;
-  const postScore = postQuizScore ? Math.round((postQuizScore.score / postQuizScore.total) * 100) : 0;
+  // compute percentages safely
+  const preScore = preQuizScore
+    ? Math.round((preQuizScore.score / preQuizScore.total) * 100)
+    : 0;
+  const postScore = postQuizScore
+    ? Math.round((postQuizScore.score / postQuizScore.total) * 100)
+    : 0;
 
-  const improvement = postQuizScore && preQuizScore ? postQuizScore.score - preQuizScore.score : 0;
-  const improvementPercentage = preQuizScore ? Math.round((improvement / preQuizScore.total) * 100) : 0;
+  const improvement =
+    postQuizScore && preQuizScore
+      ? postQuizScore.score - preQuizScore.score
+      : 0;
+  const improvementPercentage = preQuizScore
+    ? Math.round((improvement / preQuizScore.total) * 100)
+    : 0;
 
-  const getPerformanceLevel = (score: number) => {
-    if (score >= 90) return { level: "Xuất sắc", color: colors.success[500], emoji: "🎯" };
-    if (score >= 80) return { level: "Rất tốt", color: colors.success[400], emoji: "🌟" };
-    if (score >= 70) return { level: "Tốt", color: colors.accent.blue, emoji: "👍" };
-    if (score >= 60) return { level: "Khá", color: colors.warning[500], emoji: "💪" };
-    return { level: "Cần cải thiện", color: colors.error[500], emoji: "📚" };
+  // return level, color value and an Icon component for UI (no emoji strings)
+  const getPerformanceLevel = (
+    score: number
+  ): { level: string; color: string; Icon?: ReactNode } => {
+    if (score >= 90)
+      return {
+        level: "Xuất sắc",
+        color: colors.success[500],
+        Icon: <FiAward />,
+      };
+    if (score >= 80)
+      return {
+        level: "Rất tốt",
+        color: colors.success[500],
+        Icon: <MdEmojiEvents />,
+      };
+    if (score >= 70)
+      return { level: "Tốt", color: colors.primary[500], Icon: <FiTarget /> };
+    if (score >= 60)
+      return {
+        level: "Khá",
+        color: colors.primary[600],
+        Icon: <FiBarChart2 />,
+      };
+    return {
+      level: "Cần cải thiện",
+      color: colors.error[500],
+      Icon: <MdSchool />,
+    };
   };
 
   const prePerformance = getPerformanceLevel(preScore);
@@ -51,7 +91,7 @@ export default function CompletionScreen({
       label: "Điểm Post-Quiz",
       value: `${postQuizScore?.score ?? 0}/${postQuizScore?.total ?? 0}`,
       percentage: postScore,
-      color: colors.accent.purple,
+      color: colors.primary[300],
     },
     {
       icon: <FiBarChart2 className="w-5 h-5" />,
@@ -66,17 +106,17 @@ export default function CompletionScreen({
     {
       title: "Tiếp tục học tập",
       description: "Duy trì thói quen học tập đều đặn để củng cố kiến thức",
-      icon: "📚",
+      icon: <MdSchool />,
     },
     {
       title: "Thực hành dự án",
       description: "Áp dụng kiến thức vào các dự án thực tế",
-      icon: "💻",
+      icon: <MdTrendingUp />,
     },
     {
       title: "Tham gia cộng đồng",
       description: "Kết nối với các developer khác để học hỏi",
-      icon: "👥",
+      icon: <MdShare />,
     },
   ];
 
@@ -89,28 +129,65 @@ export default function CompletionScreen({
         transition={{ duration: 0.6 }}
         className="text-center mb-12"
       >
-        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-[${colors.accent.purple}] to-[${colors.primary[500]}] flex items-center justify-center text-white shadow-xl">
-          <MdEmojiEvents className="w-10 h-10" />
+        <div
+          style={{
+            width: 96,
+            height: 96,
+            margin: "0 auto 16px",
+            borderRadius: 999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#fff",
+            boxShadow: "0 8px 30px rgba(16,24,40,0.08)",
+            background: gradients.primary,
+          }}
+        >
+          <MdEmojiEvents size={36} />
         </div>
 
-        <h1 className="text-3xl md:text-4xl font-bold text-[${colors.primary[700]}] mb-4">Chúc mừng hoàn thành! 🎉</h1>
+        <h1
+          style={{
+            color: colors.primary[700],
+            fontSize: 28,
+            marginBottom: 12,
+            fontWeight: 700,
+          }}
+        >
+          Chúc mừng hoàn thành!
+        </h1>
 
-        <p className="text-lg text-[${colors.neutral[600]}] max-w-2xl mx-auto">
-          Bạn đã hoàn thành xuất sắc lộ trình học tập. Dưới đây là tổng quan kết quả và những khuyến nghị để tiếp tục
-          phát triển.
+        <p
+          style={{
+            color: colors.neutral[600],
+            maxWidth: 720,
+            margin: "0 auto",
+          }}
+        >
+          Bạn đã hoàn thành lộ trình. Dưới đây là tổng quan kết quả và những
+          khuyến nghị để tiếp tục phát triển.
         </p>
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
+      <div className="grid md:grid-cols-3 gap-6 mb-8 mt-8">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
+            transition={{ duration: 0.6, delay: index * 0.08 }}
           >
-            <Card hover padding="lg" className="text-center">
+            <Card
+              hover
+              padding="lg"
+              className="text-center"
+              style={{
+                margin: 20,
+                border: `1px solid ${colors.neutral[200]}`,
+                borderRadius: 12,
+              }}
+            >
               <div
                 className="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center text-white"
                 style={{ backgroundColor: stat.color }}
@@ -118,22 +195,52 @@ export default function CompletionScreen({
                 {stat.icon}
               </div>
 
-              <div className="text-2xl font-bold text-[${colors.primary[700]}] mb-2">{stat.value}</div>
+              <div
+                style={{
+                  fontSize: 20,
+                  fontWeight: 700,
+                  color: colors.primary[700],
+                  marginBottom: 8,
+                }}
+              >
+                {stat.value}
+              </div>
 
-              <div className="text-sm font-medium text-[${colors.neutral[600]}] mb-3">{stat.label}</div>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: colors.neutral[600],
+                  marginBottom: 12,
+                }}
+              >
+                {stat.label}
+              </div>
 
               {/* Progress Bar */}
-              <div className="w-full bg-[${colors.neutral[200]}] rounded-full h-2 mb-2">
+              <div
+                style={{
+                  width: "100%",
+                  background: colors.neutral[200],
+                  borderRadius: 999,
+                  height: 8,
+                  marginBottom: 8,
+                }}
+              >
                 <div
-                  className="h-2 rounded-full transition-all duration-1000 ease-out"
                   style={{
+                    height: "100%",
+                    borderRadius: 999,
+                    transition: "width 1s ease",
                     width: `${stat.percentage}%`,
-                    backgroundColor: stat.color,
+                    background: stat.color,
                   }}
                 />
               </div>
 
-              <div className="text-xs text-[${colors.neutral[500]}]">{stat.percentage}%</div>
+              <div style={{ fontSize: 12, color: colors.neutral[500] }}>
+                {stat.percentage}%
+              </div>
             </Card>
           </motion.div>
         ))}
@@ -145,30 +252,93 @@ export default function CompletionScreen({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.3 }}
         className="mb-8"
+        style={{ margin: 20 }}
       >
         <Card padding="lg">
-          <h2 className="text-xl font-bold text-[${colors.primary[700]}] mb-6 text-center">Phân tích hiệu suất</h2>
+          <h2
+            style={{
+              fontSize: 18,
+              fontWeight: 700,
+              color: colors.primary[700],
+              marginBottom: 18,
+              textAlign: "center",
+            }}
+          >
+            Phân tích hiệu suất
+          </h2>
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="text-center">
-              <div className="text-sm font-medium text-[${colors.neutral[500]}] mb-2">Trước khi học</div>
-              <div className="text-4xl font-bold mb-2" style={{ color: prePerformance.color }}>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: colors.neutral[500],
+                  marginBottom: 8,
+                }}
+              >
+                Trước khi học
+              </div>
+              <div
+                style={{
+                  fontSize: 36,
+                  fontWeight: 800,
+                  color: prePerformance.color,
+                  marginBottom: 8,
+                }}
+              >
                 {preScore}%
               </div>
-              <div className="flex items-center justify-center gap-2 text-sm">
-                <span>{prePerformance.emoji}</span>
-                <span style={{ color: prePerformance.color }}>{prePerformance.level}</span>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  fontSize: 14,
+                }}
+              >
+                <span>{prePerformance.Icon}</span>
+                <span style={{ color: prePerformance.color, fontWeight: 600 }}>
+                  {prePerformance.level}
+                </span>
               </div>
             </div>
 
             <div className="text-center">
-              <div className="text-sm font-medium text-[${colors.neutral[500]}] mb-2">Sau khi học</div>
-              <div className="text-4xl font-bold mb-2" style={{ color: postPerformance.color }}>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: colors.neutral[500],
+                  marginBottom: 8,
+                }}
+              >
+                Sau khi học
+              </div>
+              <div
+                style={{
+                  fontSize: 36,
+                  fontWeight: 800,
+                  color: postPerformance.color,
+                  marginBottom: 8,
+                }}
+              >
                 {postScore}%
               </div>
-              <div className="flex items-center justify-center gap-2 text-sm">
-                <span>{postPerformance.emoji}</span>
-                <span style={{ color: postPerformance.color }}>{postPerformance.level}</span>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  fontSize: 14,
+                }}
+              >
+                <span>{postPerformance.Icon}</span>
+                <span style={{ color: postPerformance.color, fontWeight: 600 }}>
+                  {postPerformance.level}
+                </span>
               </div>
             </div>
           </div>
@@ -179,19 +349,60 @@ export default function CompletionScreen({
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.8, type: "spring" }}
-              className={`mt-6 p-4 rounded-xl text-center ${
-                improvement > 0 ? "bg-green-50 border border-green-200" : "bg-orange-50 border border-orange-200"
-              }`}
+              style={{
+                marginTop: 20,
+                // border: `1px solid ${colors.neutral[200]}`,
+              }}
             >
-              <div className="flex items-center justify-center gap-3">
-                <MdTrendingUp className={`w-5 h-5 ${improvement > 0 ? "text-green-600" : "text-orange-600"}`} />
-                <span className={`font-semibold ${improvement > 0 ? "text-green-700" : "text-orange-700"}`}>
-                  {improvement > 0 ? `+${improvement} điểm tiến bộ` : "Cần ôn tập thêm"}
-                </span>
+              <div
+                style={{
+                  padding: 12,
+                  borderRadius: 12,
+                  textAlign: "center",
+                  backgroundColor: improvement > 0 ? "#ECFDF5" : "#FFF7ED",
+                  border: `1px solid ${
+                    improvement > 0 ? "#DCFCE7" : "#FFEDD5"
+                  }`,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                  }}
+                >
+                  <MdTrendingUp
+                    style={{
+                      width: 20,
+                      height: 20,
+                      color:
+                        improvement > 0
+                          ? colors.success[600]
+                          : colors.warning[500],
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontWeight: 700,
+                      color:
+                        improvement > 0
+                          ? colors.success[600]
+                          : colors.warning[500],
+                    }}
+                  >
+                    {improvement > 0
+                      ? `+${improvement} điểm tiến bộ`
+                      : "Cần ôn tập thêm"}
+                  </span>
+                </div>
+                {improvement > 0 && (
+                  <p style={{ color: colors.success[600], marginTop: 8 }}>
+                    Bạn đã cải thiện đáng kể! Tiếp tục phát huy nhé!
+                  </p>
+                )}
               </div>
-              {improvement > 0 && (
-                <p className="text-sm text-green-600 mt-1">Bạn đã cải thiện đáng kể! Tiếp tục phát huy nhé! 🚀</p>
-              )}
             </motion.div>
           )}
         </Card>
@@ -203,21 +414,65 @@ export default function CompletionScreen({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
         className="mb-8"
+        style={{
+          border: `1px solid ${colors.neutral[200]}`,
+          borderRadius: 20,
+          margin: 20,
+          marginBottom: 80,
+          paddingBottom: 50,
+        }}
       >
-        <h2 className="text-2xl font-bold text-[${colors.primary[700]}] mb-6 text-center">Khuyến nghị tiếp theo</h2>
+        <h2
+          style={{
+            fontSize: 20,
+            fontWeight: 700,
+            color: colors.primary[700],
+            textAlign: "center",
+            marginBottom: 16,
+          }}
+        >
+          Khuyến nghị tiếp theo
+        </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
           {recommendations.map((rec, index) => (
             <motion.div
               key={rec.title}
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+              transition={{ duration: 0.45, delay: 0.15 + index * 0.08 }}
             >
-              <Card hover padding="md" className="text-center h-full">
-                <div className="text-3xl mb-3">{rec.icon}</div>
-                <h3 className="font-semibold text-[${colors.primary[600]}] mb-2">{rec.title}</h3>
-                <p className="text-sm text-[${colors.neutral[600]}]">{rec.description}</p>
+              <Card
+                hover
+                padding="md"
+                className="text-center h-full"
+                style={{
+                  margin: 20,
+                  border: `1px solid ${colors.neutral[200]}`,
+                  borderRadius: 20,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 28,
+                    marginBottom: 10,
+                    color: colors.primary[500],
+                  }}
+                >
+                  {rec.icon}
+                </div>
+                <h3
+                  style={{
+                    fontWeight: 700,
+                    color: colors.primary[600],
+                    marginBottom: 6,
+                  }}
+                >
+                  {rec.title}
+                </h3>
+                <p style={{ color: colors.neutral[600], fontSize: 14 }}>
+                  {rec.description}
+                </p>
               </Card>
             </motion.div>
           ))}
@@ -229,14 +484,19 @@ export default function CompletionScreen({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.6 }}
-        className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+        className="flex flex-row sm:flex-row gap-4 justify-center items-center space-x-8"
       >
         <Button size="lg" onClick={onViewCourses} className="group">
           <MdSchool className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
           Xem Lại Khóa Học
         </Button>
 
-        <Button variant="outline" size="lg" onClick={onRestart} className="group">
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={onRestart}
+          className="group"
+        >
           <MdReplay className="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform" />
           Bắt Đầu Lại
         </Button>
@@ -255,9 +515,15 @@ export default function CompletionScreen({
         className="text-center mt-12"
       >
         <div className="max-w-2xl mx-auto">
-          <div className="text-4xl mb-4">✨</div>
-          <blockquote className="text-lg italic text-[${colors.neutral[600]}]">
-            "Học tập là hành trình không ngừng nghỉ. Mỗi bước tiến hôm nay là nền tảng cho thành công ngày mai."
+          <blockquote
+            style={{
+              fontSize: 16,
+              fontStyle: "italic",
+              color: colors.neutral[600],
+            }}
+          >
+            "Học tập là hành trình không ngừng nghỉ. Mỗi bước tiến hôm nay là
+            nền tảng cho thành công ngày mai."
           </blockquote>
         </div>
       </motion.div>

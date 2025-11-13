@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import { motion } from "framer-motion";
 import {
   MdAccountCircle,
   MdQuiz,
@@ -8,6 +9,8 @@ import {
   MdCheckCircle,
   MdEmojiEvents,
 } from "react-icons/md";
+import { colors } from "@/theme/colors";
+import Link from "next/link";
 
 interface LayoutProps {
   children: ReactNode;
@@ -48,16 +51,31 @@ export default function Layout({
 
   const activeIndex = mapToIndex(currentStep);
 
+  const stepVariants = {
+    hidden: { opacity: 0, y: 8, scale: 0.98 },
+    show: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { delay: i * 0.06, duration: 0.36 },
+    }),
+  };
+
   return (
-    // Set page background to primary color #F4EEFF
-    <div style={{ backgroundColor: "#F4EEFF" }} className="min-h-screen py-8">
+    <div
+      style={{
+        backgroundColor: colors.primary[50],
+        fontFamily: "Inter, Roboto, sans-serif",
+      }}
+      className="min-h-screen py-6"
+    >
       <div className="mx-auto px-4 max-w-5xl">
         {/* Header - centered, single title */}
         <header className="text-center mb-6 px-4">
           <div className="inline-flex items-center justify-center gap-3">
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center shadow-md"
-              style={{ backgroundColor: "#424874" }}
+              style={{ backgroundColor: colors.primary[500] }}
             >
               {/* subtle professional icon */}
               <svg
@@ -75,80 +93,136 @@ export default function Layout({
                 />
               </svg>
             </div>
-            <div>
+            <div style={{ marginLeft: 12 }}>
               <h1
                 className="text-2xl sm:text-3xl font-extrabold"
-                style={{ color: "#424874" }}
+                style={{ color: colors.primary[700] }}
               >
                 RAG Learning Assistant
               </h1>
               <p
                 className="mt-2 text-sm sm:text-base"
-                style={{ color: "#A6B1E1" }}
+                style={{ color: colors.primary[200] }}
               >
                 Phân tích CV / Profile và đề xuất lộ trình học phù hợp — kèm
                 quiz trước / sau để theo dõi tiến bộ.
               </p>
+              {/* Add small link to /welcome */}
+              {/* <div style={{ marginTop: 6 }}>
+                <Link
+                  href="/welcome"
+                  className="text-sm font-medium"
+                  style={{ color: colors.primary[500] }}
+                >
+                  Welcome page
+                </Link>
+              </div> */}
             </div>
           </div>
         </header>
 
-        {/* Pipeline stepper (horizontal, centered, responsive) */}
-        <div className="flex justify-center mb-8">
-          <div className="w-full max-w-[900px] overflow-x-auto px-2">
-            <div className="flex items-center gap-4 justify-center min-w-[680px] px-2">
+        {/* Reworked Pipeline Stepper: centered, evenly spaced, consistent connectors */}
+        <div className="flex justify-center mb-2" style={{ marginTop: 6 }}>
+          <div className="w-full max-w-[820px] px-2">
+            {/* Use space-between so steps are evenly distributed */}
+            <div
+              className="flex items-center"
+              style={{
+                width: "100%",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               {steps.map((s, idx) => {
                 const isActive = idx === activeIndex;
                 const isCompleted = idx < activeIndex;
                 const IconComp = s.Icon;
 
                 return (
-                  <div key={s.key} className="flex items-center">
-                    {/* Node */}
-                    <div className="flex flex-col items-center">
+                  <motion.div
+                    key={s.key}
+                    custom={idx}
+                    initial="hidden"
+                    animate="show"
+                    variants={stepVariants}
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {/* Node (centered in its column) */}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        width: "100%",
+                      }}
+                    >
                       <div
-                        className="flex items-center justify-center rounded-full transition-transform duration-200"
+                        aria-current={isActive ? "step" : undefined}
+                        title={s.label}
                         style={{
-                          width: isActive ? 56 : 48,
-                          height: isActive ? 56 : 48,
-                          backgroundColor: isActive ? "#A6B1E1" : "#DCD6F7",
-                          boxShadow: isActive
-                            ? "0 8px 20px rgba(66,72,116,0.12)"
-                            : "none",
+                          width: isActive ? 64 : 48,
+                          height: isActive ? 64 : 48,
                           borderRadius: 999,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          background: isActive
+                            ? colors.primary[500]
+                            : isCompleted
+                            ? colors.primary[300]
+                            : colors.primary[200],
+                          boxShadow: isActive
+                            ? "0 12px 30px rgba(16,24,40,0.16)"
+                            : "none",
+                          transform: isActive
+                            ? "translateY(-4px) scale(1.03)"
+                            : "none",
+                          transition: "all .18s ease",
                         }}
                       >
                         <IconComp
-                          size={isActive ? 24 : 20}
-                          color={isActive ? "#424874" : "#A6B1E1"}
+                          size={isActive ? 26 : 20}
+                          color={isActive ? "#fff" : colors.primary[700]}
                         />
                       </div>
+
                       <div
-                        className="mt-2 text-xs text-center"
                         style={{
-                          color: "#424874",
-                          opacity: isActive ? 1 : 0.95,
+                          marginTop: 8,
+                          fontSize: 12,
+                          color: colors.primary[700],
+                          fontWeight: isActive ? 700 : 600,
                         }}
                       >
                         {s.label}
                       </div>
                     </div>
 
-                    {/* Connector */}
+                    {/* Connector except after last */}
                     {idx < steps.length - 1 && (
                       <div
                         aria-hidden
-                        className="flex-1 mx-3"
                         style={{
-                          height: 6,
-                          minWidth: 48,
-                          background: isCompleted ? "#A6B1E1" : "#DCD6F7",
+                          height: 4,
+                          flex: 1,
+                          marginLeft: 12,
+                          marginRight: 12,
+                          background: isCompleted
+                            ? colors.primary[300]
+                            : colors.primary[200],
                           borderRadius: 999,
-                          transition: "background .25s ease",
+                          alignSelf: "center",
+                          minWidth: 40,
+                          maxWidth: 120,
+                          transition: "background .18s ease",
                         }}
                       />
                     )}
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -158,10 +232,7 @@ export default function Layout({
         {/* Main content wrapper */}
         <main
           className="rounded-2xl p-6 md:p-8"
-          style={{
-            backgroundColor: "#F4EEFF",
-            border: "1px solid #A6B1E1",
-          }}
+          style={{ backgroundColor: colors.primary[50], marginTop: 30 }}
         >
           {children}
         </main>

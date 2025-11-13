@@ -2,9 +2,19 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Button from "./ui/Button";
+import FullScreenLoader from "./ui/FullScreenLoader";
+import Card from "./ui/Card";
+import { colors, gradients } from "@/theme/colors";
+import { MdCloudUpload } from "react-icons/md";
 
 interface ProfileUploadProps {
-  onComplete: (profileText: string, careerGoal: string, profileAnalysis?: any, preQuiz?: any) => void;
+  onComplete: (
+    profileText: string,
+    careerGoal: string,
+    profileAnalysis?: any,
+    preQuiz?: any
+  ) => void;
 }
 
 interface UploadProgress {
@@ -107,10 +117,13 @@ MỤC TIÊU NGHỀ NGHIỆP:
         message: "AI đang phân tích CV và parse text...",
       });
 
-      const response = await fetch("http://localhost:8000/api/upload-and-analyze", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://localhost:8000/api/upload-and-analyze",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Upload failed: ${response.statusText}`);
@@ -121,7 +134,8 @@ MỤC TIÊU NGHỀ NGHIỆP:
       if (data.ok) {
         setUploadProgress({
           status: "complete",
-          message: "✅ Đã parse CV thành công! Bạn có thể chỉnh sửa text bên dưới.",
+          message:
+            "✅ Đã parse CV thành công! Bạn có thể chỉnh sửa text bên dưới.",
         });
 
         // Hiển thị text đã parse trong textarea, cho phép chỉnh sửa
@@ -135,7 +149,9 @@ MỤC TIÊU NGHỀ NGHIỆP:
       console.error("Upload error:", error);
       setUploadProgress({
         status: "error",
-        message: `❌ Lỗi: ${error instanceof Error ? error.message : "Upload thất bại"}`,
+        message: `❌ Lỗi: ${
+          error instanceof Error ? error.message : "Upload thất bại"
+        }`,
       });
     } finally {
       setIsAnalyzing(false);
@@ -164,15 +180,18 @@ MỤC TIÊU NGHỀ NGHIỆP:
 
     try {
       // Gọi API normalize profile
-      const normalizeResponse = await fetch("http://localhost:8000/api/normalize-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          profile_text: profileText,
-        }),
-      });
+      const normalizeResponse = await fetch(
+        "http://localhost:8000/api/normalize-profile",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            profile_text: profileText,
+          }),
+        }
+      );
 
       if (!normalizeResponse.ok) {
         throw new Error("Normalization failed");
@@ -181,17 +200,20 @@ MỤC TIÊU NGHỀ NGHIỆP:
       const normalizeData = await normalizeResponse.json();
 
       // Generate pre-quiz
-      const quizResponse = await fetch("http://localhost:8000/api/generate-quiz", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          profile_text: profileText,
-          career_goal: careerGoal,
-          quiz_type: "pre-quiz",
-        }),
-      });
+      const quizResponse = await fetch(
+        "http://localhost:8000/api/generate-quiz",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            profile_text: profileText,
+            career_goal: careerGoal,
+            quiz_type: "pre-quiz",
+          }),
+        }
+      );
 
       const quizData = await quizResponse.json();
 
@@ -201,7 +223,12 @@ MỤC TIÊU NGHỀ NGHIỆP:
       });
 
       // Chuyển sang pre-quiz
-      onComplete(profileText, careerGoal, normalizeData.normalized_profile, quizData);
+      onComplete(
+        profileText,
+        careerGoal,
+        normalizeData.normalized_profile,
+        quizData
+      );
     } catch (error) {
       console.error("Manual submit error:", error);
       setUploadProgress({
@@ -227,15 +254,18 @@ MỤC TIÊU NGHỀ NGHIỆP:
 
     try {
       // Gọi API normalize profile
-      const normalizeResponse = await fetch("http://localhost:8000/api/normalize-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          profile_text: profileText,
-        }),
-      });
+      const normalizeResponse = await fetch(
+        "http://localhost:8000/api/normalize-profile",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            profile_text: profileText,
+          }),
+        }
+      );
 
       if (!normalizeResponse.ok) {
         throw new Error("Normalization failed");
@@ -244,22 +274,30 @@ MỤC TIÊU NGHỀ NGHIỆP:
       const normalizeData = await normalizeResponse.json();
 
       // Generate pre-quiz
-      const quizResponse = await fetch("http://localhost:8000/api/generate-quiz", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          profile_text: profileText,
-          career_goal: careerGoal,
-          quiz_type: "pre-quiz",
-        }),
-      });
+      const quizResponse = await fetch(
+        "http://localhost:8000/api/generate-quiz",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            profile_text: profileText,
+            career_goal: careerGoal,
+            quiz_type: "pre-quiz",
+          }),
+        }
+      );
 
       const quizData = await quizResponse.json();
 
       // Chuyển sang pre-quiz
-      onComplete(profileText, careerGoal, normalizeData.normalized_profile, quizData);
+      onComplete(
+        profileText,
+        careerGoal,
+        normalizeData.normalized_profile,
+        quizData
+      );
     } catch (error) {
       console.error("Continue error:", error);
       setUploadProgress({
@@ -307,39 +345,109 @@ MỤC TIÊU NGHỀ NGHIỆP:
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Tải Lên CV & Phân Tích</h2>
-        <p className="text-gray-600">
-          Tải lên CV của bạn hoặc nhập thông tin thủ công để nhận đánh giá và khóa học phù hợp
-        </p>
-      </div>
+    // LAYOUT: gradient background + dot matrix overlay
+    <div
+      style={{
+        minHeight: "72vh",
+        background:
+          "linear-gradient(180deg, rgba(243,250,255,0.9), rgba(248,252,255,1))",
+        padding: "48px 16px",
+      }}
+    >
+      {/* decorative dot matrix overlay */}
+      <svg
+        aria-hidden
+        style={{
+          position: "absolute",
+          left: 16,
+          top: 16,
+          opacity: 0.04,
+          pointerEvents: "none",
+        }}
+        width="220"
+        height="220"
+        viewBox="0 0 220 220"
+        fill="none"
+      >
+        <g fill="rgba(16,24,40,0.03)">
+          {[...Array(11)].map((_, r) =>
+            [...Array(11)].map((_, c) => (
+              <circle key={`${r}-${c}`} cx={c * 20} cy={r * 20} r={1.2} />
+            ))
+          )}
+        </g>
+      </svg>
 
-      {/* Upload Section */}
-      {!showPreview ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* File Upload Card */}
-          <div
-            className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-blue-400 transition-colors cursor-pointer"
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
+      <div className="max-w-4xl mx-auto relative" style={{ zIndex: 2 }}>
+        {/* show full-screen loading overlay while analyzing */}
+        {isAnalyzing && <FullScreenLoader message="Đang phân tích..." />}
+
+        <div style={{ textAlign: "center", marginBottom: 18 }}>
+          <h2
+            style={{
+              fontSize: 28,
+              fontWeight: 800,
+              color: colors.primary[700],
+              marginBottom: 6,
+            }}
           >
-            <div className="flex flex-col items-center justify-center h-48">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <span className="text-2xl">📄</span>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Tải lên CV của bạn</h3>
-              <p className="text-gray-500 text-sm mb-4">Kéo thả file hoặc click để chọn</p>
-              <button
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 font-medium"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  fileInputRef.current?.click();
+            Tải Lên CV & Phân Tích
+          </h2>
+          <p style={{ color: colors.neutral[600], marginBottom: 0 }}>
+            Tải lên CV hoặc nhập thủ công — AI sẽ phân tích và đề xuất lộ trình
+            học phù hợp.
+          </p>
+        </div>
+
+        {/* GRID: Upload Card + Manual Input Card */}
+        {/* gap-8 ~= 32px vertical/horizontal — gives airy spacing between cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Upload Card */}
+          <Card
+            hover
+            padding="lg"
+            className="mb-6 flex items-center justify-center"
+            onClick={() => fileInputRef.current?.click()}
+            style={{ boxShadow: "0 10px 30px rgba(16,24,40,0.06)" }}
+          >
+            <div style={{ textAlign: "center", width: "100%", padding: 8 }}>
+              <div
+                style={{
+                  width: 120,
+                  height: 120,
+                  margin: "0 auto 20px",
+                  borderRadius: 20,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: gradients.secondary,
+                  boxShadow: "0 10px 30px rgba(50,130,184,0.10)",
                 }}
               >
-                Chọn File
-              </button>
+                <MdCloudUpload size={52} color="#fff" />
+              </div>
+
+              <p
+                style={{
+                  color: colors.primary[700],
+                  fontWeight: 800,
+                  marginBottom: 8,
+                }}
+              >
+                Kéo & Thả hoặc chọn tệp
+              </p>
+              <p
+                style={{
+                  color: colors.neutral[500],
+                  marginBottom: 18,
+                  maxWidth: 420,
+                  margin: "0 auto",
+                }}
+              >
+                Hỗ trợ: PDF, DOCX, TXT — chúng tôi sẽ tự động trích xuất và phân
+                tích nội dung.
+              </p>
+
               <input
                 ref={fileInputRef}
                 type="file"
@@ -347,29 +455,84 @@ MỤC TIÊU NGHỀ NGHIỆP:
                 accept=".pdf,.docx,.txt"
                 onChange={handleFileSelect}
               />
-              <p className="text-xs text-gray-400 mt-3">Hỗ trợ: PDF, DOCX, TXT (tối đa 10MB)</p>
-            </div>
 
-            {uploadedFile && (
-              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-green-700 text-sm font-medium">✅ Đã chọn: {uploadedFile.name}</p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 12,
+                  marginTop: 16,
+                }}
+              >
+                <Button
+                  size="md"
+                  variant="primary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
+                >
+                  Tải lên CV
+                </Button>
               </div>
-            )}
-          </div>
+
+              {uploadedFile && (
+                <div
+                  style={{
+                    marginTop: 18,
+                    padding: 12,
+                    borderRadius: 12,
+                    background: "rgba(50,130,184,0.06)",
+                    border: `1px solid ${colors.primary[100]}`,
+                    display: "inline-block",
+                  }}
+                >
+                  <div
+                    style={{
+                      color: colors.primary[700],
+                      fontWeight: 700,
+                      fontSize: 13,
+                    }}
+                  >
+                    Đã chọn: {uploadedFile.name}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
 
           {/* Manual Input Card */}
-          <div className="border-2 border-gray-200 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Hoặc nhập thông tin thủ công</h3>
-
-            <form onSubmit={handleManualSubmit} className="space-y-4">
-              {/* Career Goal */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Mục tiêu nghề nghiệp *</label>
+          <Card
+            hover
+            padding="lg"
+            className="mb-6"
+            style={{ boxShadow: "0 10px 30px rgba(16,24,40,0.06)" }}
+          >
+            <form onSubmit={handleManualSubmit}>
+              <div style={{ marginBottom: 20 }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontWeight: 800,
+                    color: colors.primary[700],
+                    marginBottom: 10,
+                  }}
+                >
+                  Mục tiêu nghề nghiệp *
+                </label>
                 <select
                   required
                   value={careerGoal}
                   onChange={(e) => setCareerGoal(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  style={{
+                    width: "100%",
+                    padding: "18px 20px",
+                    borderRadius: 12,
+                    border: `1px solid ${colors.primary[100]}`,
+                    boxShadow: "inset 0 1px 3px rgba(16,24,40,0.03)",
+                    fontSize: 15,
+                    background: "#fff",
+                  }}
                 >
                   {careerOptions.map((option) => (
                     <option key={option} value={option}>
@@ -379,188 +542,102 @@ MỤC TIÊU NGHỀ NGHIỆP:
                 </select>
               </div>
 
-              {/* Profile Text Area */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Thông tin Profile/CV *</label>
+              <div style={{ marginBottom: 20 }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontWeight: 800,
+                    color: colors.primary[700],
+                    marginBottom: 10,
+                  }}
+                >
+                  Thông tin Profile/CV *
+                </label>
                 <textarea
                   required
                   value={profileText}
                   onChange={(e) => setProfileText(e.target.value)}
-                  rows={8}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm bg-white resize-none"
-                  placeholder="Nhập thông tin profile của bạn bao gồm:
-• Kinh nghiệm làm việc
-• Kỹ năng chuyên môn
-• Học vấn
-• Dự án đã làm
-• Mục tiêu nghề nghiệp"
+                  rows={10}
+                  style={{
+                    width: "100%",
+                    padding: "18px 20px",
+                    borderRadius: 12,
+                    border: `1px solid ${colors.primary[100]}`,
+                    fontSize: 14,
+                    lineHeight: 1.6,
+                    background: "#fff",
+                    boxShadow: "inset 0 1px 2px rgba(16,24,40,0.03)",
+                    resize: "vertical",
+                    minHeight: 180,
+                  }}
+                  placeholder="Nhập thông tin profile: kinh nghiệm, kỹ năng, học vấn, dự án..."
                 />
               </div>
 
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={loadSampleProfile}
-                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
-                >
-                  📝 Dùng Profile Mẫu
-                </button>
-                <button
-                  type="submit"
+              <div
+                style={{
+                  display: "flex",
+                  gap: 12,
+                  justifyContent: "center",
+                  marginTop: 16,
+                }}
+              >
+                <Button size="md" variant="outline" onClick={loadSampleProfile}>
+                  Dùng Profile Mẫu
+                </Button>
+
+                <Button
+                  size="md"
+                  variant="primary"
+                  onClick={handleManualSubmit}
                   disabled={!profileText.trim() || isAnalyzing}
-                  className="flex-1 px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+                  loading={isAnalyzing}
                 >
-                  {isAnalyzing ? (
-                    <span className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Đang phân tích...
-                    </span>
-                  ) : (
-                    "Phân Tích & Tiếp Tục"
-                  )}
-                </button>
+                  {isAnalyzing ? "Đang phân tích..." : "Phân Tích & Tiếp Tục"}
+                </Button>
               </div>
             </form>
-          </div>
+          </Card>
         </div>
-      ) : (
-        /* Preview Mode - Sau khi upload CV thành công */
-        <div className="border-2 border-gray-200 rounded-2xl p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-800">Preview & Chỉnh Sửa Profile</h3>
-            <button
-              onClick={resetUpload}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
-            >
-              ↶ Tải Lại CV Khác
-            </button>
-          </div>
 
-          <div className="space-y-4">
-            {/* Career Goal */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Mục tiêu nghề nghiệp *</label>
-              <select
-                required
-                value={careerGoal}
-                onChange={(e) => setCareerGoal(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-              >
-                {careerOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Parsed Text Preview & Edit */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Thông tin Profile/CV (đã parse từ CV) *
-                <span className="text-green-600 text-xs ml-2">✓ Bạn có thể chỉnh sửa text này</span>
-              </label>
-              <textarea
-                value={profileText}
-                onChange={(e) => setProfileText(e.target.value)}
-                rows={12}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm bg-white resize-none"
-                placeholder="Nội dung đã được parse từ CV của bạn..."
-              />
-              <p className="text-xs text-gray-500 mt-2">
-                💡 Kiểm tra và chỉnh sửa thông tin nếu cần thiết trước khi tiếp tục
-              </p>
-            </div>
-
-            <div className="flex gap-3 pt-4">
-              <button
-                onClick={resetUpload}
-                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
-              >
-                ← Quay Lại
-              </button>
-              <button
-                onClick={handleContinueWithParsedText}
-                disabled={!profileText.trim() || isAnalyzing}
-                className="flex-1 px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
-              >
-                {isAnalyzing ? (
-                  <span className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Đang phân tích...
-                  </span>
-                ) : (
-                  "Tiếp Tục →"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Progress/Status Display */}
-      {uploadProgress.status !== "idle" && (
-        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-800">Trạng thái xử lý</h3>
-            <span className={`text-sm font-medium ${getStatusColor()}`}>
-              {uploadProgress.status === "uploading" && "📤 Đang upload..."}
-              {uploadProgress.status === "analyzing" && "🤖 AI đang phân tích..."}
-              {uploadProgress.status === "complete" && "✅ Hoàn thành"}
-              {uploadProgress.status === "error" && "❌ Lỗi"}
-            </span>
-          </div>
-
-          <p className={`text-sm ${getStatusColor()} mb-3`}>{uploadProgress.message}</p>
-
-          {/* Progress Bar */}
-          {(uploadProgress.status === "uploading" || uploadProgress.status === "analyzing") && (
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-blue-500 h-2 rounded-full transition-all duration-300 animate-pulse"
-                style={{
-                  width: uploadProgress.status === "uploading" ? "50%" : "90%",
-                }}
-              ></div>
-            </div>
-          )}
-
-          {uploadProgress.status === "error" && (
-            <button
-              onClick={resetUpload}
-              className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm"
-            >
-              Thử Lại
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Information Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        {/* Information Cards */}
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center mb-2">
             <span className="text-blue-500 mr-2">🔍</span>
             <span className="font-semibold text-blue-800">Phân tích AI</span>
           </div>
-          <p className="text-blue-700">AI sẽ phân tích kỹ năng, kinh nghiệm và đề xuất lộ trình học tập phù hợp</p>
+          <p className="text-blue-700">
+            AI sẽ phân tích kỹ năng, kinh nghiệm và đề xuất lộ trình học tập phù
+            hợp
+          </p>
         </div>
 
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <div className="flex items-center mb-2">
             <span className="text-green-500 mr-2">🎯</span>
-            <span className="font-semibold text-green-800">Đánh giá kỹ năng</span>
+            <span className="font-semibold text-green-800">
+              Đánh giá kỹ năng
+            </span>
           </div>
-          <p className="text-green-700">Bài quiz được tạo riêng để đánh giá trình độ và thu thập thông tin học tập</p>
+          <p className="text-green-700">
+            Bài quiz được tạo riêng để đánh giá trình độ và thu thập thông tin
+            học tập
+          </p>
         </div>
 
         <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
           <div className="flex items-center mb-2">
             <span className="text-purple-500 mr-2">📚</span>
-            <span className="font-semibold text-purple-800">Gợi ý cá nhân hóa</span>
+            <span className="font-semibold text-purple-800">
+              Gợi ý cá nhân hóa
+            </span>
           </div>
-          <p className="text-purple-700">Khóa học được đề xuất dựa trên phân tích CV và kết quả đánh giá</p>
+          <p className="text-purple-700">
+            Khóa học được đề xuất dựa trên phân tích CV và kết quả đánh giá
+          </p>
         </div>
+      </div> */}
       </div>
     </div>
   );

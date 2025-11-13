@@ -1,28 +1,26 @@
 // theme/colors.ts
 export const colors = {
-  // Primary palette
+  // Primary palette (updated)
   primary: {
-    50: "#F0F4FF",
-    100: "#E6EDFE",
-    200: "#D6E2FD",
-    300: "#A6B1E1",
-    400: "#8B97D6",
-    500: "#424874",
-    600: "#363B6A",
-    700: "#2A2F5A",
-    800: "#1F2348",
-    900: "#151836",
+    50: "#F3FAFF",
+    100: "#BBE1FA",
+    200: "#99D4F4",
+    300: "#63BEEB",
+    400: "#4799D6",
+    500: "#3282B8",
+    600: "#2B6B9E",
+    700: "#0F4C75",
+    800: "#0C3B59",
+    900: "#1B262C",
   },
 
-  // Accent colors
+  // Accent colors - removed purple, keep blues/teal only
   accent: {
-    purple: "#9B87F5",
-    blue: "#6C87F5",
+    blue: "#63A7E8",
     teal: "#5EEAD4",
-    pink: "#F472B6",
   },
 
-  // Neutral colors
+  // Neutral colors (kept)
   neutral: {
     50: "#F8FAFC",
     100: "#F1F5F9",
@@ -36,7 +34,7 @@ export const colors = {
     900: "#0F172A",
   },
 
-  // Semantic colors
+  // Semantic colors (kept)
   success: {
     50: "#F0FDF4",
     500: "#22C55E",
@@ -57,10 +55,13 @@ export const colors = {
 };
 
 export const gradients = {
-  primary: "linear-gradient(135deg, #424874 0%, #A6B1E1 100%)",
-  secondary: "linear-gradient(135deg, #9B87F5 0%, #6C87F5 100%)",
-  accent: "linear-gradient(135deg, #5EEAD4 0%, #6C87F5 50%)",
-  card: "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)",
+  // hero gradient: blue -> lighter blue (no purple)
+  hero: "linear-gradient(135deg, #3282B8 0%, #63A7E8 100%)",
+  // primary (buttons / accents)
+  primary: "linear-gradient(135deg, #3282B8 0%, #0F4C75 100%)",
+  secondary: "linear-gradient(135deg, #63BEEB 0%, #3282B8 100%)",
+  accent: "linear-gradient(135deg, #5EEAD4 0%, #63A7E8 50%)",
+  card: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%)",
 };
 
 export const shadows = {
@@ -70,4 +71,5 @@ export const shadows = {
   lg: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
   xl: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
   "2xl": "0 50px 100px -20px rgb(0 0 0 / 0.25)",
+  glow: "0 8px 30px rgba(50,130,184,0.16)",
 };

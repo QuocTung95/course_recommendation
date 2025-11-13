@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { api, Course } from "@/lib/api";
 import Card from "./ui/Card";
+import FullScreenLoader from "./ui/FullScreenLoader";
+import Button from "./ui/Button";
+import { colors } from "@/theme/colors";
 import {
   MdEmojiEvents,
   MdThumbUp,
@@ -11,11 +14,17 @@ import {
   MdMenuBook,
   MdInfo,
   MdSearch,
+  MdPerson,
+  MdStar,
+  MdAccessTime,
+  MdCheckCircle,
 } from "react-icons/md";
+import { FiTarget, FiAward } from "react-icons/fi";
 
 interface CourseRecommendationsProps {
   userProfile: string;
   careerGoal: string;
+  profileAnalysis?: any; // optional analysis object (added)
   quizScore: { score: number; total: number };
   onContinue: () => void;
   onRetakeQuiz: () => void;
@@ -24,6 +33,7 @@ interface CourseRecommendationsProps {
 export default function CourseRecommendations({
   userProfile,
   careerGoal,
+  profileAnalysis, // added to destructure prop
   quizScore,
   onContinue,
   onRetakeQuiz,
@@ -39,12 +49,41 @@ export default function CourseRecommendations({
       setError(null);
 
       try {
-        const response = await api.recommendCourses({
+        const payload: Record<string, any> = {
           profile_text: userProfile,
           career_goal: careerGoal,
-        });
+        };
+        if (profileAnalysis) payload.profile_analysis = profileAnalysis;
 
-        setCourses(response.courses);
+        // Safe call: prefer api.recommendCourses if available, otherwise POST to /api/recommend-courses
+        let response: any;
+        if (typeof (api as any)?.recommendCourses === "function") {
+          response = await (api as any).recommendCourses(payload);
+        } else {
+          const res = await fetch("/api/recommend-courses", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          response = res.ok ? await res.json() : { data: [] };
+        }
+
+        // Normalize possible response shapes into coursesList array
+        const resAny = response as any;
+        let coursesList: Course[] = [];
+        if (Array.isArray(resAny)) {
+          coursesList = resAny;
+        } else if (Array.isArray(resAny?.courses)) {
+          coursesList = resAny.courses;
+        } else if (Array.isArray(resAny?.data?.courses)) {
+          coursesList = resAny.data.courses;
+        } else if (Array.isArray(resAny?.data)) {
+          coursesList = resAny.data;
+        } else {
+          coursesList = [];
+        }
+
+        setCourses(coursesList);
       } catch (err) {
         setError("Không thể tải khóa học. Vui lòng thử lại.");
         setCourses(getFallbackCourses());
@@ -54,7 +93,7 @@ export default function CourseRecommendations({
     };
 
     fetchRecommendations();
-  }, [userProfile, careerGoal]);
+  }, [userProfile, careerGoal, profileAnalysis]);
 
   const getFallbackCourses = (): Course[] => {
     return [
@@ -88,34 +127,7 @@ export default function CourseRecommendations({
   const feedbackText = getPerformanceFeedbackText();
 
   if (isLoading) {
-    return (
-      <div className="text-center py-12">
-        <div
-          className="mx-auto mb-4"
-          style={{
-            width: 48,
-            height: 48,
-            borderTop: "3px solid #424874",
-            borderLeft: "3px solid transparent",
-            borderRight: "3px solid transparent",
-            borderBottom: "3px solid transparent",
-            borderRadius: "50%",
-          }}
-        />
-        <h3 style={{ color: "#424874", fontWeight: 600 }}>
-          Đang phân tích và gợi ý khóa học...
-        </h3>
-        <p
-          style={{
-            color: "#424874",
-            opacity: 0.9,
-            marginTop: 8,
-          }}
-        >
-          Dựa trên profile và kết quả quiz của bạn
-        </p>
-      </div>
-    );
+    return <FullScreenLoader message="Loading... Đang gợi ý khóa học" />;
   }
 
   if (error) {
@@ -123,8 +135,8 @@ export default function CourseRecommendations({
       <div className="text-center py-12">
         <div
           style={{
-            backgroundColor: "#DCD6F7",
-            border: "1px solid #A6B1E1",
+            backgroundColor: colors.primary[200],
+            border: `1px solid ${colors.primary[100]}`,
             borderRadius: 12,
             padding: 16,
             marginBottom: 16,
@@ -132,19 +144,19 @@ export default function CourseRecommendations({
         >
           <h3
             style={{
-              color: "#424874",
+              color: colors.primary[700],
               fontWeight: 700,
               marginBottom: 6,
             }}
           >
             Lỗi
           </h3>
-          <p style={{ color: "#424874" }}>{error}</p>
+          <p style={{ color: colors.primary[700] }}>{error}</p>
         </div>
         <button
           onClick={() => window.location.reload()}
           style={{
-            backgroundColor: "#424874",
+            backgroundColor: colors.primary[500],
             color: "#fff",
             padding: "10px 18px",
             borderRadius: 8,
@@ -156,12 +168,32 @@ export default function CourseRecommendations({
     );
   }
 
+  // update stat color for Post-Quiz fallback to primary[300]
+
+  const stats = [
+    {
+      icon: <FiTarget className="w-5 h-5" />,
+      label: "Điểm Pre-Quiz",
+      value: `${quizScore.score}/${quizScore.total}`,
+      percentage: (quizScore.score / quizScore.total) * 100,
+      color: colors.primary[500],
+    },
+    {
+      icon: <FiAward className="w-5 h-5" />,
+      label: "Điểm Post-Quiz",
+      value: `${quizScore.score}/${quizScore.total}`,
+      percentage: (quizScore.score / quizScore.total) * 100,
+      // replaced accent.purple -> primary[300]
+      color: colors.primary[300],
+    },
+  ];
+
   return (
     <div className="max-w-5xl mx-auto">
       <div className="text-center mb-6">
         <h2
           style={{
-            color: "#424874",
+            color: colors.primary[700],
             fontWeight: 800,
             fontSize: 20,
           }}
@@ -170,7 +202,7 @@ export default function CourseRecommendations({
         </h2>
         <p
           style={{
-            color: "#424874",
+            color: colors.primary[600],
             opacity: 0.9,
           }}
         >
@@ -181,11 +213,13 @@ export default function CourseRecommendations({
       {/* Performance Summary */}
       <div
         style={{
-          backgroundColor: "#DCD6F7",
-          border: "1px solid #A6B1E1",
+          backgroundColor: colors.primary[200],
+          border: `1px solid ${colors.primary[100]}`,
           borderRadius: 12,
           padding: 14,
           marginBottom: 18,
+          marginLeft: 50,
+          marginRight: 50,
         }}
       >
         <div
@@ -199,7 +233,7 @@ export default function CourseRecommendations({
           <div>
             <h3
               style={{
-                color: "#424874",
+                color: colors.primary[700],
                 fontWeight: 700,
               }}
             >
@@ -208,7 +242,7 @@ export default function CourseRecommendations({
             </h3>
             <p
               style={{
-                color: "#424874",
+                color: colors.primary[700],
                 marginTop: 6,
               }}
             >
@@ -228,10 +262,26 @@ export default function CourseRecommendations({
         </div>
       </div>
 
-      {/* Course Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      {/* Course Grid - updated styles: blue palette, larger gap, better card content */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         {courses.map((course, index) => {
           const isSelected = selectedCourse === course.course_title;
+
+          // fallback arrays when course doesn't provide structured fields
+          const outcomes = (course as any).outcomes ?? [
+            "Understand core concepts",
+            "Build a small real-world project",
+            "Deploy to production",
+          ];
+          const requirements = (course as any).requirements ?? [
+            "Basic programming knowledge",
+            "Familiarity with web fundamentals",
+          ];
+          const audience = (course as any).audience ?? [
+            "Beginners aiming for Backend roles",
+            "Junior devs seeking practical experience",
+          ];
+
           return (
             <Card
               key={index}
@@ -239,298 +289,367 @@ export default function CourseRecommendations({
               onClick={() =>
                 setSelectedCourse(isSelected ? null : course.course_title)
               }
-              className={`p-5 cursor-pointer transition-all ${
-                isSelected ? "" : ""
-              }`}
+              className="p-5 cursor-pointer transition-all"
+              style={{
+                marginBottom: 20,
+                marginLeft: 50,
+                marginRight: 50,
+                // border: `1px solid ${colors.neutral[200]}`,
+              }}
             >
               <div
                 style={{
-                  backgroundColor: isSelected ? "#DCD6F7" : "#F4EEFF",
-                  border: "1px solid #A6B1E1",
-                  borderRadius: 12,
-                  padding: 12,
+                  backgroundColor: "rgba(255,255,255,0.98)",
+                  border: `1px solid ${colors.primary[100]}`,
+                  borderRadius: 14,
+                  padding: 18,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 16,
                 }}
               >
+                {/* Title */}
+                <div>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 18,
+                      fontWeight: 900,
+                      color: colors.primary[700],
+                    }}
+                  >
+                    {course.course_title}
+                  </h3>
+                  <p
+                    style={{
+                      margin: "8px 0 0",
+                      color: colors.neutral[500],
+                      fontSize: 14,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {course.text}
+                  </p>
+                </div>
+
+                {/* Metadata row: Instructor / Level / Rating / Duration */}
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
+                    gap: 12,
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    marginTop: 8,
                   }}
                 >
                   <div
                     style={{
-                      display: "flex",
-                      gap: 12,
-                      alignItems: "flex-start",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "6px 10px",
+                      borderRadius: 999,
+                      background: colors.primary[50],
+                      border: `1px solid ${colors.primary[100]}`,
                     }}
                   >
-                    <div
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 20,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backgroundColor: "#A6B1E1",
-                        color: "#424874",
-                        fontWeight: 700,
-                      }}
+                    <MdPerson style={{ color: colors.primary[600] }} />{" "}
+                    <span
+                      style={{ fontWeight: 700, color: colors.primary[700] }}
                     >
-                      {index + 1}
-                    </div>
-                    <div>
-                      <h3
-                        style={{
-                          color: "#424874",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {course.course_title}
-                      </h3>
-                      {course.similarity && (
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginTop: 8,
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: 112,
-                              height: 8,
-                              backgroundColor: "#DCD6F7",
-                              borderRadius: 999,
-                              marginRight: 8,
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: `${(course.similarity ?? 0) * 100}%`,
-                                height: "100%",
-                                backgroundColor: "#A6B1E1",
-                                borderRadius: 999,
-                                transition: "width 0.5s",
-                              }}
-                            />
-                          </div>
-                          <span
-                            style={{
-                              color: "#424874",
-                              opacity: 0.9,
-                              fontSize: 13,
-                            }}
-                          >
-                            {Math.round((course.similarity ?? 0) * 100)}% phù
-                            hợp
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                      Instructor
+                    </span>
+                    <span style={{ color: colors.primary[600], marginLeft: 6 }}>
+                      Expert Instructor
+                    </span>
                   </div>
 
                   <div
                     style={{
-                      color: "#424874",
-                      fontSize: 13,
-                      display: "flex",
+                      display: "inline-flex",
                       alignItems: "center",
-                      gap: 6,
+                      gap: 8,
+                      padding: "6px 10px",
+                      borderRadius: 999,
+                      background: colors.primary[50],
+                      border: `1px solid ${colors.primary[100]}`,
                     }}
                   >
-                    {index === 0 && (
-                      <>
-                        <MdWhatshot color="#424874" />
-                        <span style={{ fontSize: 12 }}>Đề xuất hàng đầu</span>
-                      </>
-                    )}
+                    <MdStar style={{ color: colors.primary[600] }} />{" "}
+                    <strong style={{ color: colors.primary[700] }}>4.6</strong>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "6px 10px",
+                      borderRadius: 999,
+                      background: colors.primary[50],
+                      border: `1px solid ${colors.primary[100]}`,
+                    }}
+                  >
+                    <MdAccessTime style={{ color: colors.primary[600] }} />{" "}
+                    <span
+                      style={{ color: colors.primary[700], fontWeight: 700 }}
+                    >
+                      12h
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "6px 10px",
+                      borderRadius: 999,
+                      background: colors.primary[50],
+                      border: `1px solid ${colors.primary[100]}`,
+                    }}
+                  >
+                    <span
+                      style={{ color: colors.primary[600], fontWeight: 700 }}
+                    >
+                      Level
+                    </span>{" "}
+                    <strong style={{ color: colors.primary[700] }}>
+                      Intermediate
+                    </strong>
                   </div>
                 </div>
 
-                <p
+                {/* Two-column details: Outcomes / Requirements / Audience */}
+                <div
                   style={{
-                    color: "#424874",
-                    marginTop: 12,
-                    lineHeight: 1.45,
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 18,
+                    marginTop: 8,
                   }}
                 >
-                  {course.text}
-                </p>
-
-                {isSelected && (
-                  <div
-                    style={{
-                      marginTop: 12,
-                      padding: 12,
-                      backgroundColor: "#F4EEFF",
-                      border: "1px solid #A6B1E1",
-                      borderRadius: 10,
-                    }}
-                  >
-                    <h4
+                  <div>
+                    <div
                       style={{
-                        color: "#424874",
-                        fontWeight: 700,
+                        fontWeight: 800,
+                        color: colors.primary[700],
                         marginBottom: 8,
                       }}
                     >
-                      Tại sao phù hợp với bạn?
-                    </h4>
+                      Learning Outcomes
+                    </div>
                     <ul
                       style={{
-                        color: "#424874",
-                        opacity: 0.95,
+                        margin: 0,
+                        paddingLeft: 18,
+                        color: colors.primary[600],
+                        display: "grid",
+                        gap: 8,
+                      }}
+                    >
+                      {outcomes.map((o, i) => (
+                        <li
+                          key={i}
+                          style={{
+                            display: "flex",
+                            gap: 8,
+                            alignItems: "flex-start",
+                          }}
+                        >
+                          <MdCheckCircle
+                            style={{
+                              color: colors.primary[300],
+                              marginTop: 4,
+                            }}
+                          />
+                          <span>{o}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <div
+                      style={{
+                        fontWeight: 800,
+                        color: colors.primary[700],
+                        marginBottom: 8,
+                      }}
+                    >
+                      Requirements
+                    </div>
+                    <ul
+                      style={{
+                        margin: 0,
+                        paddingLeft: 18,
+                        color: colors.primary[600],
+                        display: "grid",
+                        gap: 8,
                         marginBottom: 12,
                       }}
                     >
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                        }}
-                      >
-                        <MdThumbUp />
-                        <span>
-                          Phù hợp với mục tiêu trở thành{" "}
-                          <strong>{careerGoal}</strong>
-                        </span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                        }}
-                      >
-                        <MdLightbulb />
-                        <span>Bổ sung kiến thức từ kết quả quiz của bạn</span>
-                      </li>
-                      <li
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                        }}
-                      >
-                        <MdInfo />
-                        <span>
-                          Phù hợp với kinh nghiệm hiện tại trong profile
-                        </span>
-                      </li>
+                      {requirements.map((r, i) => (
+                        <li
+                          key={i}
+                          style={{
+                            display: "flex",
+                            gap: 8,
+                            alignItems: "flex-start",
+                          }}
+                        >
+                          <MdCheckCircle
+                            style={{
+                              color: colors.primary[300],
+                              marginTop: 4,
+                            }}
+                          />
+                          <span>{r}</span>
+                        </li>
+                      ))}
                     </ul>
+
                     <div
                       style={{
-                        display: "flex",
-                        gap: 8,
-                        flexWrap: "wrap",
+                        fontWeight: 800,
+                        color: colors.primary[700],
+                        marginBottom: 8,
                       }}
                     >
-                      <button
-                        style={{
-                          backgroundColor: "#424874",
-                          color: "#fff",
-                          padding: "8px 12px",
-                          borderRadius: 8,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                        }}
-                      >
-                        <MdMenuBook /> <span>Bắt Đầu Học Ngay</span>
-                      </button>
-                      <button
-                        style={{
-                          backgroundColor: "#F4EEFF",
-                          border: "1px solid #A6B1E1",
-                          color: "#424874",
-                          padding: "8px 12px",
-                          borderRadius: 8,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                        }}
-                      >
-                        <MdInfo /> <span>Xem Chi Tiết Syllabus</span>
-                      </button>
+                      Target Audience
                     </div>
+                    <ul
+                      style={{
+                        margin: 0,
+                        paddingLeft: 18,
+                        color: colors.primary[600],
+                        display: "grid",
+                        gap: 8,
+                      }}
+                    >
+                      {audience.map((a, i) => (
+                        <li
+                          key={i}
+                          style={{
+                            display: "flex",
+                            gap: 8,
+                            alignItems: "flex-start",
+                          }}
+                        >
+                          <MdCheckCircle
+                            style={{
+                              color: colors.primary[300],
+                              marginTop: 4,
+                            }}
+                          />
+                          <span>{a}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                )}
+                </div>
               </div>
+
+              {isSelected && (
+                /* KEEP EXISTING "Tại sao phù hợp?" BLOCK UNCHANGED */
+                <div
+                  style={{
+                    marginTop: 6,
+                    padding: 14,
+                    backgroundColor: colors.primary[50],
+                    border: `1px solid ${colors.primary[100]}`,
+                    borderRadius: 10,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 12,
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: colors.primary[700],
+                      fontWeight: 800,
+                      margin: 0,
+                    }}
+                  >
+                    Tại sao phù hợp với bạn?
+                  </h4>
+                  <ul
+                    style={{
+                      margin: 0,
+                      paddingLeft: 16,
+                      color: colors.primary[700],
+                    }}
+                  >
+                    <li style={{ marginBottom: 6 }}>
+                      Phù hợp với mục tiêu trở thành{" "}
+                      <strong>{careerGoal}</strong>
+                    </li>
+                    <li style={{ marginBottom: 6 }}>
+                      Bổ sung kiến thức theo kết quả quiz
+                    </li>
+                    <li style={{ marginBottom: 6 }}>
+                      Liên quan tới kinh nghiệm hiện tại
+                    </li>
+                  </ul>
+
+                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                    <Button
+                      size="md"
+                      variant="primary"
+                      onClick={() => {
+                        /* start learning */
+                      }}
+                    >
+                      <MdMenuBook /> <span>Bắt Đầu Học Ngay</span>
+                    </Button>
+
+                    <Button
+                      size="md"
+                      variant="outline"
+                      onClick={() => {
+                        /* view syllabus */
+                      }}
+                    >
+                      <MdInfo /> <span>Xem Chi Tiết Syllabus</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </Card>
           );
         })}
       </div>
 
-      {/* Action Buttons */}
+      {/* Action Buttons (use Button component) */}
       <div
         style={{
+          marginTop: 18,
           display: "flex",
-          flexDirection: "column",
           gap: 12,
-          borderTop: `1px solid #A6B1E1`,
-          paddingTop: 16,
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          marginLeft: 50,
+          marginRight: 50,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            gap: 12,
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-          }}
-        >
-          <button
-            onClick={onRetakeQuiz}
-            style={{
-              flex: "1 0 auto",
-              padding: "10px 16px",
-              borderRadius: 8,
-              backgroundColor: "#F4EEFF",
-              border: "1px solid #A6B1E1",
-              color: "#424874",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <MdMenuBook /> <span>Làm Lại Pre-Quiz</span>
-          </button>
+        <Button variant="outline" onClick={onRetakeQuiz}>
+          <MdMenuBook /> <span>Làm Lại Pre-Quiz</span>
+        </Button>
 
-          <div style={{ display: "flex", gap: 8 }}>
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              style={{
-                padding: "10px 16px",
-                borderRadius: 8,
-                backgroundColor: "#F4EEFF",
-                border: "1px solid #A6B1E1",
-                color: "#424874",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
-              <MdSearch /> <span>Xem lại profile</span>
-            </button>
-            <button
-              onClick={onContinue}
-              style={{
-                padding: "10px 16px",
-                borderRadius: 8,
-                backgroundColor: "#424874",
-                color: "#fff",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
-              <span>Tiếp Tục Học Tập</span>{" "}
-              <span style={{ fontSize: 12, marginLeft: 8 }}>(Post-Quiz)</span>
-            </button>
-          </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <Button
+            variant="outline"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            <MdSearch /> <span>Xem lại profile</span>
+          </Button>
+
+          <Button variant="primary" onClick={onContinue}>
+            Tiếp Tục Học Tập{" "}
+            <span style={{ fontSize: 12, marginLeft: 8 }}>(Post-Quiz)</span>
+          </Button>
         </div>
       </div>
     </div>
