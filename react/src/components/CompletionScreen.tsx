@@ -79,13 +79,13 @@ export default function CompletionScreen({
   const postPerformance = getPerformanceLevel(postScore);
 
   const stats = [
-    {
-      icon: <FiTarget className="w-5 h-5" />,
-      label: "Pre-Quiz Score",
-      value: `${preQuizScore?.score ?? 0}/${preQuizScore?.total ?? 0}`,
-      percentage: preScore,
-      color: colors.primary[500],
-    },
+    // {
+    //   icon: <FiTarget className="w-5 h-5" />,
+    //   label: "Pre-Quiz Score",
+    //   value: `${preQuizScore?.score ?? 0}/${preQuizScore?.total ?? 0}`,
+    //   percentage: preScore,
+    //   color: colors.primary[500],
+    // },
     {
       icon: <FiAward className="w-5 h-5" />,
       label: "Post-Quiz Score",

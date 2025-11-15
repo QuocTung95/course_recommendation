@@ -264,30 +264,22 @@ export default function CourseRecommendations({
 
       <div className="text-center mb-8">
         <h2
-          style={{
-            color: colors.primary[700],
-            fontWeight: 800,
-            fontSize: 24,
-          }}
+          style={{ color: colors.primary[700], fontWeight: 800, fontSize: 24 }}
         >
-          Lộ Trình Học Tập Cá Nhân Hóa
+          Personalized Learning Path
         </h2>
-        <p
-          style={{
-            color: colors.primary[600],
-            opacity: 0.9,
-          }}
-        >
-          Được thiết kế riêng dựa trên phân tích profile và mục tiêu của bạn
+        <p style={{ color: colors.primary[600], opacity: 0.9 }}>
+          Designed for you based on your profile analysis and goals
         </p>
       </div>
 
-      {/* Assessment Section - redesigned styling */}
+      {/* Assessment Section - redesigned styling (colors switched to primary palette for consistency) */}
       {assessment && (
         <div
           style={{
             backgroundColor: colors.primary[50],
-            border: `2px solid ${colors.success[500]}`,
+            // use primary border to match app theme instead of green
+            border: `2px solid ${colors.primary[200]}`,
             borderRadius: 12,
             padding: 24,
             marginBottom: 28,
@@ -305,7 +297,8 @@ export default function CourseRecommendations({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background: `linear-gradient(135deg, ${colors.success[500]}, ${colors.primary[300]})`,
+                // use primary gradient for icon wrapper
+                background: `linear-gradient(135deg, ${colors.primary[500]}, ${colors.primary[300]})`,
                 color: "#fff",
                 flexShrink: 0,
               }}
@@ -340,9 +333,10 @@ export default function CourseRecommendations({
                     gap: 8,
                   }}
                 >
+                  {/* career tag styled with primary color */}
                   <div
                     style={{
-                      background: colors.success[500],
+                      background: colors.primary[500],
                       color: "#fff",
                       padding: "6px 10px",
                       borderRadius: 999,
@@ -381,7 +375,7 @@ export default function CourseRecommendations({
                       alignItems: "center",
                       gap: 8,
                       marginBottom: 8,
-                      color: colors.success[600],
+                      color: colors.primary[600],
                       fontWeight: 800,
                     }}
                   >
@@ -400,8 +394,9 @@ export default function CourseRecommendations({
                         key={i}
                         style={{ marginBottom: 8, display: "flex", gap: 8 }}
                       >
+                        {/* use primary tone for check icon */}
                         <MdCheckCircle
-                          style={{ color: colors.success[300], marginTop: 4 }}
+                          style={{ color: colors.primary[300], marginTop: 4 }}
                         />
                         <span>{s}</span>
                       </li>
@@ -416,7 +411,7 @@ export default function CourseRecommendations({
                       alignItems: "center",
                       gap: 8,
                       marginBottom: 8,
-                      color: colors.warning[600],
+                      color: colors.primary[600],
                       fontWeight: 800,
                     }}
                   >
@@ -436,7 +431,7 @@ export default function CourseRecommendations({
                         style={{ marginBottom: 8, display: "flex", gap: 8 }}
                       >
                         <MdCheckCircle
-                          style={{ color: colors.warning[500], marginTop: 4 }}
+                          style={{ color: colors.primary[300], marginTop: 4 }}
                         />
                         <span>{w}</span>
                       </li>
@@ -489,18 +484,19 @@ export default function CourseRecommendations({
         {courses.map((course, index) => {
           const isSelected = selectedCourse === course.course_title;
 
+          // ensure default outcome/requirement/audience text is in English
           const outcomes = (course as any).outcomes ?? [
-            "Hiểu sâu các khái niệm cốt lõi",
-            "Xây dựng dự án thực tế",
-            "Triển khai ứng dụng production",
+            "Deep understanding of core concepts",
+            "Build real-world projects",
+            "Deploy applications to production",
           ];
           const requirements = (course as any).requirements ?? [
-            "Kiến thức lập trình cơ bản",
-            "Hiểu biết về web fundamentals",
+            "Basic programming knowledge",
+            "Understanding of web fundamentals",
           ];
           const audience = (course as any).audience ?? [
-            "Developer muốn chuyên sâu Backend",
-            "Junior dev muốn nâng cao kỹ năng thực tế",
+            "Developers aiming to specialize in backend",
+            "Junior devs looking to improve practical skills",
           ];
 
           return (
@@ -511,11 +507,7 @@ export default function CourseRecommendations({
                 setSelectedCourse(isSelected ? null : course.course_title)
               }
               className="p-5 cursor-pointer transition-all"
-              style={{
-                marginBottom: 20,
-                marginLeft: 20,
-                marginRight: 20,
-              }}
+              style={{ marginBottom: 20, marginLeft: 20, marginRight: 20 }}
             >
               <div
                 style={{
@@ -528,7 +520,7 @@ export default function CourseRecommendations({
                   gap: 16,
                 }}
               >
-                {/* Title với Link */}
+                {/* Title */}
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <h3
@@ -555,7 +547,7 @@ export default function CourseRecommendations({
                   </p>
                 </div>
 
-                {/* Metadata row */}
+                {/* Metadata row (Instructor / Rating / Duration / Level) */}
                 <div
                   style={{
                     display: "flex",
@@ -637,15 +629,16 @@ export default function CourseRecommendations({
                   </div>
                 </div>
 
-                {/* Course Details */}
+                {/* Course Details: horizontal 3-column layout */}
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
+                    gridTemplateColumns: "repeat(3, 1fr)",
                     gap: 18,
                     marginTop: 8,
                   }}
                 >
+                  {/* What you'll learn */}
                   <div>
                     <div
                       style={{
@@ -654,7 +647,7 @@ export default function CourseRecommendations({
                         marginBottom: 8,
                       }}
                     >
-                      Bạn sẽ học được gì
+                      What you'll learn
                     </div>
                     <ul
                       style={{
@@ -686,6 +679,7 @@ export default function CourseRecommendations({
                     </ul>
                   </div>
 
+                  {/* Requirements */}
                   <div>
                     <div
                       style={{
@@ -694,7 +688,7 @@ export default function CourseRecommendations({
                         marginBottom: 8,
                       }}
                     >
-                      Yêu cầu
+                      Requirements
                     </div>
                     <ul
                       style={{
@@ -703,7 +697,6 @@ export default function CourseRecommendations({
                         color: colors.primary[600],
                         display: "grid",
                         gap: 8,
-                        marginBottom: 12,
                       }}
                     >
                       {requirements.map((r, i) => (
@@ -725,7 +718,10 @@ export default function CourseRecommendations({
                         </li>
                       ))}
                     </ul>
+                  </div>
 
+                  {/* Target Audience */}
+                  <div>
                     <div
                       style={{
                         fontWeight: 800,
@@ -733,7 +729,7 @@ export default function CourseRecommendations({
                         marginBottom: 8,
                       }}
                     >
-                      Dành cho ai
+                      Who is this for
                     </div>
                     <ul
                       style={{
@@ -766,6 +762,7 @@ export default function CourseRecommendations({
                   </div>
                 </div>
 
+                {/* Expanded detail area */}
                 {isSelected && (
                   <div
                     style={{
@@ -786,7 +783,7 @@ export default function CourseRecommendations({
                         margin: 0,
                       }}
                     >
-                      Tại sao phù hợp với bạn?
+                      Why this is a good fit
                     </h4>
                     <ul
                       style={{
@@ -796,22 +793,26 @@ export default function CourseRecommendations({
                       }}
                     >
                       <li style={{ marginBottom: 6 }}>
-                        Phù hợp với mục tiêu trở thành{" "}
+                        Matches your goal to become{" "}
                         <strong>{careerGoal}</strong>
                       </li>
                       <li style={{ marginBottom: 6 }}>
-                        Bổ sung kiến thức theo đánh giá trình độ
+                        Addresses gaps found in your assessment
                       </li>
                       <li style={{ marginBottom: 6 }}>
-                        Phát triển các kỹ năng bạn cần cải thiện
+                        Develops skills you need to improve
                       </li>
                     </ul>
 
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                      {/* stopPropagation so clicking the button does not collapse the card */}
                       <Button
                         size="md"
                         variant="primary"
-                        onClick={() => handleStartLearning(course)}
+                        onClick={(e: any) => {
+                          e.stopPropagation();
+                          handleStartLearning(course);
+                        }}
                       >
                         <MdOpenInNew /> <span>Start learning now</span>
                       </Button>
@@ -837,17 +838,17 @@ export default function CourseRecommendations({
         }}
       >
         <Button variant="outline" onClick={onRetakeQuiz}>
-          <MdMenuBook /> <span>AI analize again</span>
+          <MdMenuBook /> <span>Analyze again</span>
         </Button>
         <div style={{ display: "flex", gap: 8 }}>
           <Button
             variant="outline"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <MdSearch /> <span>Go to watch AI's analysis</span>
+            <MdSearch /> <span>View AI analysis</span>
           </Button>
           <Button variant="primary" onClick={onContinue}>
-            Continue study{" "}
+            Continue to Final Test{" "}
             <span style={{ fontSize: 12, marginLeft: 8 }}>(Final Test)</span>
           </Button>
         </div>

@@ -6,7 +6,7 @@ interface ButtonProps {
   children: ReactNode;
   variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
-  onClick?: () => void;
+  onClick?: (e?: any) => void; // allow event param
   disabled?: boolean;
   loading?: boolean;
   className?: string;
@@ -84,7 +84,7 @@ export default function Button({
   return (
     <button
       type={type}
-      onClick={onClick}
+      onClick={(e) => onClick && onClick(e)}
       disabled={disabled || loading}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}

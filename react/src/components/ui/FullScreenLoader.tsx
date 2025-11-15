@@ -9,42 +9,20 @@ export default function FullScreenLoader({
   message?: string;
 }) {
   const [visible, setVisible] = useState<boolean>(active);
-  const [progress, setProgress] = useState<number>(0);
-  const [transitionMs, setTransitionMs] = useState<number>(0);
   const [dots, setDots] = useState<number>(0);
-  const finishingRef = useRef(false);
   const timerRef = useRef<number | null>(null);
 
-  // dots animation
   useEffect(() => {
     const t = setInterval(() => setDots((d) => (d + 1) % 4), 400);
     return () => clearInterval(t);
   }, []);
 
-  // handle show/hide and progress animations
   useEffect(() => {
     if (active) {
-      finishingRef.current = false;
       setVisible(true);
-      // start from small value then animate to 80% over 10s
-      setTransitionMs(0);
-      setProgress(6);
-      // allow next tick for transition
-      window.setTimeout(() => {
-        setTransitionMs(10000); // 10s to reach 80%
-        setProgress(80);
-      }, 30);
     } else {
-      // active -> false: finish last 20% quickly and hide
-      if (!visible) return;
-      finishingRef.current = true;
-      setTransitionMs(600); // 0.6s to finish
-      setProgress(100);
-      // hide after transition completes
       if (timerRef.current) window.clearTimeout(timerRef.current);
-      timerRef.current = window.setTimeout(() => {
-        setVisible(false);
-      }, 700);
+      timerRef.current = window.setTimeout(() => setVisible(false), 420);
     }
     return () => {
       if (timerRef.current) {
@@ -80,11 +58,24 @@ export default function FullScreenLoader({
           color: "#fff",
           padding: 28,
           borderRadius: 16,
+          opacity: visible ? 1 : 0,
+          transition: "opacity 240ms ease",
         }}
       >
+        {/* Message: CSS blink animation + JS-driven dots (synchronized visually) */}
         <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 12 }}>
-          {message}
-          <span style={{ opacity: 0.95, marginLeft: 6 }}>{dotsText}</span>
+          <span
+            className="fsloader-message"
+            style={{ display: "inline-block" }}
+          >
+            {message}
+          </span>
+          <span
+            className="fsloader-dots"
+            style={{ opacity: 0.95, marginLeft: 8 }}
+          >
+            {dotsText}
+          </span>
         </div>
 
         <div
@@ -97,6 +88,7 @@ export default function FullScreenLoader({
           Please wait a moment — we are processing your request.
         </div>
 
+        {/* Minimal subtle status area (no progress bar) */}
         <div
           style={{
             marginTop: 14,
@@ -104,8 +96,41 @@ export default function FullScreenLoader({
             color: "rgba(255,255,255,0.8)",
           }}
         >
-          {/* intentionally minimal UI while loading */}
+          {/* intentionally compact */}
         </div>
+
+        <style>{`
+          /* blink: subtle opacity + color shift using primary color */
+          .fsloader-message, .fsloader-dots {
+            animation-name: fs-blink;
+            animation-duration: 1.2s;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+          }
+
+          @keyframes fs-blink {
+            0% {
+              opacity: 0.86;
+              filter: none;
+              color: rgba(255,255,255,0.98);
+              transform: translateY(0);
+            }
+            50% {
+              opacity: 1;
+              color: ${colors.primary[300]};
+              transform: translateY(-2px);
+            }
+            100% {
+              opacity: 0.86;
+              color: rgba(255,255,255,0.98);
+              transform: translateY(0);
+            }
+          }
+
+          /* keep dots visually compact when changing */
+          .fsloader-dots { font-weight: 800; letter-spacing: -1px; }
+        `}</style>
       </div>
     </div>
   );
