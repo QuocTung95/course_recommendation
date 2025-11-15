@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import {
   MdRocketLaunch,
   MdFolder,
-  MdSchool,
   MdTrendingUp,
   MdAutoAwesome,
+  MdSchool,
+  MdPsychology,
+  MdLibraryBooks,
 } from "react-icons/md";
 import Button from "./ui/Button";
 import { colors, gradients, shadows } from "@/theme/colors";
@@ -18,27 +20,34 @@ interface WelcomeScreenProps {
 }
 
 export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const handleAIAnalysis = () => {
+    setIsAnalyzing(true);
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      onGetStarted();
+    }, 1800);
+  };
+
   const features = [
     {
-      icon: <MdAutoAwesome className="w-6 h-6" />,
+      icon: <MdPsychology className="w-6 h-6" />,
       title: "AI-Powered Analysis",
-      description:
-        "Automatically analyze your CV to understand your skills and experience",
+      description: "Advanced AI analyzes your CV to understand your skills and experience",
     },
     {
       icon: <MdSchool className="w-6 h-6" />,
       title: "Personalized Learning Path",
-      description: "A tailored learning roadmap aligned with your career goals",
+      description: "Tailored roadmap that adapts to your career goals and skill gaps",
     },
     {
       icon: <MdTrendingUp className="w-6 h-6" />,
-      title: "Progress Tracking",
-      description:
-        "Track progress with pre- and post-quizzes to measure improvement",
+      title: "Smart Progress Tracking",
+      description: "AI-driven quizzes and analytics to measure your improvement",
     },
   ];
 
-  // --- new CountUp helper (simple and smooth)
   const CountUp: React.FC<{
     end: number;
     duration?: number;
@@ -59,17 +68,12 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
       rafId = requestAnimationFrame(step);
       return () => cancelAnimationFrame(rafId);
     }, [end, duration]);
-    return (
-      <span style={{ fontWeight: 900 }}>{format ? format(value) : value}</span>
-    );
+    return <span style={{ fontWeight: 900 }}>{format ? format(value) : value}</span>;
   };
 
-  // condensed features (icons + title only) used directly under hero
-  const condensed = features.map((f) => ({ icon: f.icon, title: f.title }));
-
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8" style={{ height: "100%" }}>
-      {/* Hero — keep title/CTA, remove hero description text */}
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Main Hero Section */}
       <motion.div
         initial="hidden"
         animate="show"
@@ -77,6 +81,7 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
           show: { transition: { staggerChildren: 0.08 } },
         }}
         className="mb-8"
+        style={{ width: "100%" }}
       >
         <motion.section
           variants={{
@@ -89,89 +94,62 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
           }}
           className="mx-auto relative rounded-2xl overflow-hidden"
           style={{
-            maxWidth: 1120,
-            padding: "46px 32px",
+            padding: "52px 32px 42px",
             background: gradients.hero,
             boxShadow: shadows.glow,
-            borderRadius: 20,
+            borderRadius: 24,
+            position: "relative",
+            margin: "auto",
+            marginTop: 40,
           }}
           aria-labelledby="welcome-title"
         >
-          {/* decorative overlays: dot matrix + soft wave */}
-          <svg
-            aria-hidden
-            style={{ position: "absolute", left: -40, top: -30, opacity: 0.06 }}
-            width="420"
-            height="260"
-            viewBox="0 0 420 260"
-            fill="none"
-          >
-            <defs>
-              <linearGradient id="lg-w" x1="0" x2="1">
-                <stop offset="0" stopColor="#ffffff" stopOpacity="0.08" />
-                <stop offset="1" stopColor="#ffffff" stopOpacity="0.02" />
-              </linearGradient>
-            </defs>
-            <rect width="420" height="260" fill="url(#lg-w)" />
-            <g fill="rgba(255,255,255,0.03)">
-              {/* dot grid */}
-              {[...Array(10)].map((_, r) => (
-                <g key={r} transform={`translate(${r * 42},0)`}>
-                  {[...Array(6)].map((_, c) => (
-                    <circle key={c} cx={c * 42} cy={r * 26} r={1.6} />
-                  ))}
-                </g>
-              ))}
-            </g>
-          </svg>
-
-          {/* subtle chip shape at top-right */}
-          <svg
-            aria-hidden
+          {/* Background đơn giản */}
+          <div
             style={{
               position: "absolute",
-              right: -24,
-              top: -12,
-              opacity: 0.07,
-            }}
-            width="260"
-            height="160"
-            viewBox="0 0 260 160"
-            fill="none"
-          >
-            <path
-              d="M0 80 C60 0, 200 0, 260 80 L260 160 L0 160 Z"
-              fill="white"
-            />
-          </svg>
-
-          {/* NEW: large illustrative AI robot/chip on left for vibe */}
-          <svg
-            aria-hidden
-            style={{
-              position: "absolute",
-              left: 24,
-              top: 24,
-              opacity: 0.07,
+              inset: 0,
+              background: `linear-gradient(135deg, ${colors.primary[400]}, ${colors.primary[600]})`,
+              borderRadius: 20,
               pointerEvents: "none",
             }}
-            width="220"
-            height="220"
-            viewBox="0 0 220 220"
-            fill="none"
+          />
+
+          {/* AI Status Badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 }}
+            style={{
+              position: "absolute",
+              top: 24,
+              right: 24,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              background: "rgba(255,255,255,0.15)",
+              padding: "8px 16px",
+              borderRadius: 20,
+              fontSize: 14,
+              fontWeight: 600,
+              color: "#fff",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              zIndex: 10,
+            }}
           >
-            {/* stylized robot / chip */}
-            <rect x="12" y="12" width="196" height="196" rx="28" fill="white" />
-            <g
-              transform="translate(34,34)"
-              stroke="rgba(0,0,0,0.06)"
-              strokeWidth="4"
-            >
-              <rect x="0" y="0" width="132" height="132" rx="18" fill="none" />
-              <circle cx="22" cy="22" r="10" fill="rgba(0,0,0,0.06)" />
-              <path d="M10 70h112M10 90h112M30 30v80" strokeLinecap="round" />
-            </g>
-          </svg>
+            <motion.div
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: "#00FF88",
+              }}
+            />
+            AI Assistant Active
+          </motion.div>
 
           <div
             style={{
@@ -183,212 +161,345 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
               zIndex: 2,
             }}
           >
-            {/* small badge */}
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "6px 14px",
-                borderRadius: 999,
-                background: "rgba(255,255,255,0.08)",
-                marginBottom: 12,
-              }}
-            >
-              <strong style={{ fontSize: 13 }}>AI Learning Assistant</strong>
-            </div>
-
-            <h1
+            <motion.h1
               id="welcome-title"
               style={{
-                fontSize: 44,
-                lineHeight: 1.02,
-                margin: "10px 0 22px",
+                fontSize: 48,
+                lineHeight: 1.1,
+                margin: "0 0 16px",
                 fontWeight: 900,
+                background: `linear-gradient(135deg, #ffffff 0%, ${colors.primary[100]} 100%)`,
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                color: "transparent",
               }}
             >
-              Explore a world of learning — AI-powered personalized learning
-              paths
-            </h1>
+              Supercharge Your Career
+              <br />
+              <span
+                style={{
+                  background: `linear-gradient(135deg, ${colors.primary[300]}, ${colors.primary[500]})`,
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                  display: "inline-block",
+                  marginTop: 8,
+                }}
+              >
+                with AI-Powered Learning
+              </span>
+            </motion.h1>
 
-            {/* SINGLE MAIN CTA - centered and prominent */}
+            <motion.p
+              style={{
+                fontSize: 20,
+                opacity: 0.9,
+                margin: "0 0 40px",
+                fontWeight: 500,
+                maxWidth: 600,
+                marginLeft: "auto",
+                marginRight: "auto",
+                lineHeight: 1.4,
+              }}
+            >
+              Get a personalized learning path analyzed from your CV in 60 seconds
+            </motion.p>
+
             <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 24,
+                marginBottom: 48,
+              }}
+            >
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                  style={{
+                    background: "rgba(255,255,255,0.08)",
+                    backdropFilter: "blur(10px)",
+                    padding: "24px 20px",
+                    borderRadius: 16,
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    textAlign: "center",
+                  }}
+                  whileHover={{
+                    scale: 1.01,
+                    background: "rgba(255,255,255,0.10)",
+                    transition: { duration: 0.3 },
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: 16,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: `linear-gradient(135deg, ${colors.primary[200]}, ${colors.primary[300]})`,
+                      color: colors.primary[700],
+                      margin: "0 auto 16px",
+                    }}
+                  >
+                    {feature.icon}
+                  </div>
+                  <h3
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 700,
+                      margin: "0 0 8px",
+                      color: "#fff",
+                    }}
+                  >
+                    {feature.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: 14,
+                      opacity: 0.8,
+                      lineHeight: 1.4,
+                      margin: 0,
+                      color: "#fff",
+                    }}
+                  >
+                    {feature.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
               style={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                marginTop: 8,
               }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               <Button
                 size="lg"
                 variant="primary"
-                onClick={onGetStarted}
-                className="cta-hero"
+                onClick={handleAIAnalysis}
+                disabled={isAnalyzing}
+                style={{
+                  borderRadius: 32,
+                  background: isAnalyzing
+                    ? `linear-gradient(135deg, ${colors.primary[400]}, ${colors.primary[500]})`
+                    : `linear-gradient(135deg, ${colors.primary[300]}, ${colors.primary[400]})`,
+                  border: "none",
+                  fontSize: 18,
+                  fontWeight: 700,
+                  padding: "20px 40px",
+                  boxShadow: isAnalyzing ? "0 8px 32px rgba(79, 70, 229, 0.4)" : "0 8px 32px rgba(79, 70, 229, 0.6)",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
               >
-                <MdRocketLaunch size={22} />{" "}
-                <span style={{ marginLeft: 12 }}>Analyze & Continue</span>
+                {isAnalyzing ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      style={{ marginRight: 12 }}
+                    >
+                      <MdAutoAwesome size={22} />
+                    </motion.div>
+                    AI is Analyzing...
+                  </>
+                ) : (
+                  <>
+                    <MdRocketLaunch size={22} />
+                    <span style={{ marginLeft: 12 }}>Start AI Analysis</span>
+                  </>
+                )}
               </Button>
-            </div>
+            </motion.div>
           </div>
-
-          {/* hero CTA styles */}
-          <style>{`
-            .cta-hero { border-radius: 32px; }
-            .cta-hero:hover { cursor: pointer; }
-            @media (max-width: 640px) { h1 { font-size: 28px !important; } .cta-hero { padding-left: 28px !important; padding-right: 28px !important; } }
-          `}</style>
         </motion.section>
       </motion.div>
 
-      {/* Condensed features row (icons + titles only) */}
-      <div
+      {/* Enhanced Stats Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
         style={{
           display: "flex",
+          gap: 20,
           justifyContent: "center",
-          gap: 24,
-          marginTop: 20,
-          marginBottom: 28,
+          marginTop: 32,
+          marginBottom: 60,
+          width: "100%",
         }}
       >
-        {condensed.map((f, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 10,
-              minWidth: 160,
-            }}
-          >
+        {/* AI Accuracy Card */}
+        <div
+          style={{
+            flex: 1,
+            maxWidth: 280,
+            borderRadius: 20,
+            padding: "24px 20px",
+            background: `linear-gradient(135deg, ${colors.primary[400]}, ${colors.primary[500]})`,
+            color: "#fff",
+            boxShadow: "0 12px 40px rgba(16,24,40,0.15)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            backdropFilter: "blur(10px)",
+          }}
+          className="hover-scale"
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <div
               style={{
-                width: 64,
-                height: 64,
+                fontSize: 36,
+                background: "rgba(255,255,255,0.15)",
                 borderRadius: 12,
+                width: 60,
+                height: 60,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background: `linear-gradient(135deg, ${colors.primary[100]}, ${colors.primary[200]})`,
-                color: colors.primary[600],
-                boxShadow: "0 8px 30px rgba(16,24,40,0.06)",
               }}
             >
-              {f.icon}
+              ⚡
             </div>
-            <div
-              style={{
-                fontSize: 15,
-                fontWeight: 800,
-                color: colors.primary[700],
-              }}
-            >
-              {f.title}
+            <div style={{ textAlign: "right", flex: 1 }}>
+              <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1 }}>
+                <CountUp end={98} duration={1600} format={(n) => `${n}%`} />
+              </div>
+              <div style={{ fontSize: 14, opacity: 0.9, marginTop: 4 }}>AI Accuracy Rate</div>
+              <div style={{ fontSize: 12, opacity: 0.7 }}>Analysis precision</div>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Bottom stats — three cards with icon + animated number + short label */}
-      <div
-        style={{
-          display: "flex",
-          gap: 18,
-          justifyContent: "center",
-          marginTop: 12,
-        }}
-      >
-        {/* Courses card */}
+        {/* Course Library Card - THAY THẾ Analysis Time */}
         <div
           style={{
-            width: 260,
-            borderRadius: 14,
-            padding: 20,
+            flex: 1,
+            maxWidth: 280,
+            borderRadius: 20,
+            padding: "24px 20px",
             background: `linear-gradient(135deg, ${colors.primary[300]}, ${colors.primary[400]})`,
             color: "#fff",
-            boxShadow: "0 12px 40px rgba(16,24,40,0.12)",
-            transition: "transform .18s ease",
+            boxShadow: "0 12px 40px rgba(16,24,40,0.15)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            backdropFilter: "blur(10px)",
           }}
-          className="hover:scale-[1.02]"
+          className="hover-scale"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ fontSize: 34, lineHeight: 1 }}>
-              {/* icon */}
-              <MdFolder style={{ color: "#fff" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div
+              style={{
+                fontSize: 36,
+                background: "rgba(255,255,255,0.15)",
+                borderRadius: 12,
+                width: 60,
+                height: 60,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <MdLibraryBooks style={{ fontSize: 24 }} />
             </div>
             <div style={{ textAlign: "right", flex: 1 }}>
-              <div style={{ fontSize: 28 }}>
-                <CountUp end={500} duration={1300} format={(n) => `${n}+`} />
+              <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1 }}>
+                <CountUp end={24000} duration={1800} format={(n) => `${n.toLocaleString()}+`} />
               </div>
-              <div style={{ fontSize: 13, opacity: 0.9 }}>Courses</div>
+              <div style={{ fontSize: 14, opacity: 0.9, marginTop: 4 }}>Courses Available</div>
+              <div style={{ fontSize: 12, opacity: 0.7 }}>Massive learning library</div>
             </div>
           </div>
         </div>
 
-        {/* Users card */}
+        {/* Efficiency Card */}
         <div
           style={{
-            width: 260,
-            borderRadius: 14,
-            padding: 20,
+            flex: 1,
+            maxWidth: 280,
+            borderRadius: 20,
+            padding: "24px 20px",
             background: `linear-gradient(135deg, ${colors.primary[200]}, ${colors.primary[300]})`,
             color: "#fff",
-            boxShadow: "0 12px 40px rgba(16,24,40,0.12)",
+            boxShadow: "0 12px 40px rgba(16,24,40,0.15)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            backdropFilter: "blur(10px)",
           }}
-          className="hover:scale-[1.02]"
+          className="hover-scale"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ fontSize: 34 }}>
-              {/* icon */}
-              <MdRocketLaunch style={{ color: "#fff" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div
+              style={{
+                fontSize: 36,
+                background: "rgba(255,255,255,0.15)",
+                borderRadius: 12,
+                width: 60,
+                height: 60,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              📈
             </div>
             <div style={{ textAlign: "right", flex: 1 }}>
-              <div style={{ fontSize: 28 }}>
-                <CountUp
-                  end={10000}
-                  duration={1500}
-                  format={(n) => `${n.toLocaleString()}`}
-                />
+              <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1 }}>
+                <CountUp end={250} duration={1300} format={(n) => `${(n / 100).toFixed(1)}x`} />
               </div>
-              <div style={{ fontSize: 13, opacity: 0.9 }}>Users</div>
+              <div style={{ fontSize: 14, opacity: 0.9, marginTop: 4 }}>Learning Efficiency</div>
+              <div style={{ fontSize: 12, opacity: 0.7 }}>AI-optimized paths</div>
             </div>
           </div>
         </div>
+      </motion.div>
 
-        {/* Progress card */}
-        <div
-          style={{
-            width: 260,
-            borderRadius: 14,
-            padding: 20,
-            background: `linear-gradient(135deg, ${colors.primary[100]}, ${colors.primary[200]})`,
-            color: "#fff",
-            boxShadow: "0 12px 40px rgba(16,24,40,0.12)",
-          }}
-          className="hover:scale-[1.02]"
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ fontSize: 34 }}>
-              {/* icon */}
-              <MdTrendingUp style={{ color: "#fff" }} />
-            </div>
-            <div style={{ textAlign: "right", flex: 1 }}>
-              <div style={{ fontSize: 28 }}>
-                <CountUp
-                  end={250}
-                  duration={1300}
-                  format={(n) => `${(n / 100).toFixed(2)}x`}
-                />
-              </div>
-              <div style={{ fontSize: 13, opacity: 0.9 }}>Average Progress</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <style jsx global>{`
+        .hover-scale {
+          transition: transform 0.3s ease;
+        }
 
-      {/* preserve any remaining layout spacing if needed */}
-      <div style={{ height: 24 }} />
+        .hover-scale:hover {
+          transform: scale(1.02);
+        }
+
+        /* Cho phép scroll tự nhiên */
+        body {
+          overflow: auto;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+          .max-w-6xl {
+            padding-left: 20px;
+            padding-right: 20px;
+          }
+
+          h1 {
+            font-size: 36px !important;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .mx-auto {
+            padding: 32px 20px !important;
+          }
+
+          h1 {
+            font-size: 28px !important;
+          }
+
+          .stats-grid {
+            flex-direction: column;
+            align-items: center;
+          }
+        }
+      `}</style>
     </div>
   );
 }

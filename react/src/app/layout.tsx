@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Learning Assistant",
+  title: "AI Learning Assistant",
   description: "Hệ thống gợi ý khóa học thông minh sử dụng AI",
 };
 
