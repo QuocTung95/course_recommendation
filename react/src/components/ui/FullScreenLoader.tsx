@@ -58,7 +58,7 @@ export default function FullScreenLoader({
 
   const dotsText = ".".repeat(dots);
 
-  return visible ? (
+  return (
     <div
       role="status"
       aria-live="polite"
@@ -97,31 +97,6 @@ export default function FullScreenLoader({
           Please wait a moment — we are processing your request.
         </div>
 
-        <div style={{ marginTop: 18 }}>
-          <div
-            aria-hidden
-            style={{
-              height: 12,
-              width: "100%",
-              borderRadius: 999,
-              background: "rgba(255,255,255,0.08)",
-              overflow: "hidden",
-              boxShadow: "inset 0 2px 6px rgba(0,0,0,0.25)",
-            }}
-          >
-            <div
-              style={{
-                height: "100%",
-                width: `${progress}%`,
-                background: `linear-gradient(90deg, ${colors.primary[500]} 0%, ${colors.primary[400]} 100%)`,
-                borderRadius: 999,
-                transition: `width ${transitionMs}ms linear`,
-                boxShadow: "0 6px 20px rgba(50,130,184,0.16)",
-              }}
-            />
-          </div>
-        </div>
-
         <div
           style={{
             marginTop: 14,
@@ -129,9 +104,9 @@ export default function FullScreenLoader({
             color: "rgba(255,255,255,0.8)",
           }}
         >
-          {/* {finishingRef.current ? "Hoàn tất..." : "Đang xử lý..."} */}
+          {/* intentionally minimal UI while loading */}
         </div>
       </div>
     </div>
-  ) : null;
+  );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, JSX } from "react";
 import { api, Course } from "@/lib/api";
 import Card from "./ui/Card";
 import FullScreenLoader from "./ui/FullScreenLoader";
@@ -18,22 +18,33 @@ import {
   MdStar,
   MdAccessTime,
   MdCheckCircle,
+  MdOpenInNew,
 } from "react-icons/md";
 import { FiTarget, FiAward } from "react-icons/fi";
 
 interface CourseRecommendationsProps {
   userProfile: string;
   careerGoal: string;
-  profileAnalysis?: any; // optional analysis object (added)
+  profileAnalysis?: any;
   quizScore: { score: number; total: number };
   onContinue: () => void;
   onRetakeQuiz: () => void;
 }
 
+interface Assessment {
+  level: string;
+  strengths: string[];
+  weaknesses: string[];
+  recommendations: string[];
+  overallFeedback: string;
+  icon: JSX.Element;
+  color: string;
+}
+
 export default function CourseRecommendations({
   userProfile,
   careerGoal,
-  profileAnalysis, // added to destructure prop
+  profileAnalysis,
   quizScore,
   onContinue,
   onRetakeQuiz,
@@ -42,6 +53,7 @@ export default function CourseRecommendations({
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [assessment, setAssessment] = useState<Assessment | null>(null);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -55,20 +67,21 @@ export default function CourseRecommendations({
         };
         if (profileAnalysis) payload.profile_analysis = profileAnalysis;
 
-        // Safe call: prefer api.recommendCourses if available, otherwise POST to /api/recommend-courses
         let response: any;
         if (typeof (api as any)?.recommendCourses === "function") {
           response = await (api as any).recommendCourses(payload);
         } else {
-          const res = await fetch("/api/recommend-courses", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          response = res.ok ? await res.json() : { data: [] };
+          const res = await fetch(
+            "http://localhost:8000/api/recommend-courses",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            }
+          );
+          response = res.ok ? await res.json() : { courses: [] };
         }
 
-        // Normalize possible response shapes into coursesList array
         const resAny = response as any;
         let coursesList: Course[] = [];
         if (Array.isArray(resAny)) {
@@ -84,16 +97,114 @@ export default function CourseRecommendations({
         }
 
         setCourses(coursesList);
+
+        // Tạo assessment dựa trên profile analysis và quiz score
+        generateAssessment(profileAnalysis, quizScore, careerGoal);
       } catch (err) {
         setError("Cannot load courses. Please try again.");
         setCourses(getFallbackCourses());
+        generateAssessment(profileAnalysis, quizScore, careerGoal);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchRecommendations();
-  }, [userProfile, careerGoal, profileAnalysis]);
+  }, [userProfile, careerGoal, profileAnalysis, quizScore]);
+
+  const generateAssessment = (profile: any, quiz: any, goal: string) => {
+    const experience = profile?.experience_level || "intermediate";
+    const skills = profile?.extracted_skills || [];
+    const quizPercentage = (quiz.score / quiz.total) * 100;
+
+    let level = "Người mới bắt đầu";
+    let strengths: string[] = [];
+    let weaknesses: string[] = [];
+    let recommendations: string[] = [];
+    let overallFeedback = "";
+    let icon = <MdLightbulb />;
+    let color = colors.primary[400];
+
+    // Xác định level và đánh giá dựa trên profile và quiz
+    if (experience === "advanced" || quizPercentage >= 80) {
+      level = "Trình độ Nâng cao";
+      icon = <MdEmojiEvents />;
+      color = colors.success[500];
+      strengths = [
+        "Nền tảng kỹ thuật vững chắc",
+        "Kinh nghiệm thực tế phong phú",
+        "Khả năng giải quyết vấn đề tốt",
+      ];
+      weaknesses = [
+        "Cần cập nhật công nghệ mới nhất",
+        "Có thể thiếu kinh nghiệm với hệ thống quy mô lớn",
+      ];
+      recommendations = [
+        "Học các công nghệ hiện đại và best practices",
+        "Phát triển kỹ năng kiến trúc hệ thống",
+        "Tham gia các dự án phức tạp hơn",
+      ];
+      overallFeedback =
+        "Bạn đã có nền tảng xuất sắc! Hãy tập trung vào các kỹ năng chuyên sâu để trở thành chuyên gia.";
+    } else if (experience === "intermediate" || quizPercentage >= 60) {
+      level = "Trình độ Trung cấp";
+      icon = <MdThumbUp />;
+      color = colors.primary[500];
+      strengths = [
+        "Hiểu biết cơ bản vững vàng",
+        "Có kinh nghiệm với các dự án nhỏ",
+        "Khả năng học hỏi nhanh",
+      ];
+      weaknesses = [
+        "Cần củng cố kiến thức nâng cao",
+        "Thiếu kinh nghiệm với hệ thống phân tán",
+        "Cần cải thiện kỹ năng debugging",
+      ];
+      recommendations = [
+        "Học sâu về design patterns và architecture",
+        "Thực hành với các dự án thực tế",
+        "Phát triển kỹ năng optimization",
+      ];
+      overallFeedback =
+        "Bạn đang ở giai đoạn phát triển tốt! Hãy xây dựng nền tảng vững chắc cho sự nghiệp.";
+    } else {
+      level = "Người mới bắt đầu";
+      icon = <MdLightbulb />;
+      color = colors.primary[400];
+      strengths = [
+        "Tinh thần học hỏi cao",
+        "Không bị ảnh hưởng bởi thói quen cũ",
+        "Có thể tiếp cận từ fundamentals",
+      ];
+      weaknesses = [
+        "Thiếu kinh nghiệm thực tế",
+        "Cần xây dựng nền tảng cơ bản",
+        "Chưa thành thạo debugging",
+      ];
+      recommendations = [
+        "Bắt đầu với khóa học cơ bản vững chắc",
+        "Thực hành thường xuyên với bài tập nhỏ",
+        "Xây dựng project cá nhân đầu tiên",
+      ];
+      overallFeedback =
+        "Đây là thời điểm hoàn hảo để bắt đầu! Hãy xây dựng nền tảng thật vững chắc.";
+    }
+
+    // Thêm strengths từ skills nếu có
+    if (skills.length > 0) {
+      strengths.push(`Đã có kinh nghiệm với: ${skills.slice(0, 3).join(", ")}`);
+    }
+
+    setAssessment({
+      level,
+      strengths,
+      weaknesses,
+      recommendations,
+      overallFeedback,
+      icon,
+      color,
+    });
+  };
 
   const getFallbackCourses = (): Course[] => {
     return [
@@ -101,88 +212,48 @@ export default function CourseRecommendations({
         course_title: "Python for Beginners",
         text: "Learn Python programming from scratch. Covers variables, loops, functions, and simple projects.",
         similarity: 0.95,
+        url: "https://www.udemy.com/course/python-for-beginners/",
+        instructor: "Expert Instructor",
+        level: "Beginner",
+        rating: 4.6,
+        duration: "15 hours",
       },
       {
         course_title: "Web Development with Flask",
         text: "Build web applications with Flask framework. Covers routing, templates, databases, and deployment.",
         similarity: 0.88,
+        url: "https://www.udemy.com/course/flask-web-development/",
+        instructor: "Senior Developer",
+        level: "Intermediate",
+        rating: 4.5,
+        duration: "12 hours",
       },
       {
         course_title: "Advanced Python Programming",
         text: "Deep dive into Python advanced topics: decorators, generators, context managers, and optimization.",
         similarity: 0.82,
+        url: "https://www.udemy.com/course/advanced-python-programming/",
+        instructor: "Python Expert",
+        level: "Advanced",
+        rating: 4.7,
+        duration: "18 hours",
       },
     ];
   };
 
-  const getPerformanceFeedbackText = () => {
-    const percentage = (quizScore.score / quizScore.total) * 100;
-    if (percentage >= 80)
-      return "🎉 Excellent! You have a strong foundation for this learning path.";
-    if (percentage >= 60)
-      return "👍 Good! You have a solid foundational knowledge.";
-    return "💪 Needs improvement. The following courses will help you build a solid foundation.";
+  const handleStartLearning = (course: Course) => {
+    if (course.url && course.url !== "#") {
+      window.open(course.url, "_blank", "noopener,noreferrer");
+    } else {
+      // Fallback: tìm kiếm trên Udemy với course title
+      const searchQuery = encodeURIComponent(course.course_title);
+      window.open(
+        `https://www.udemy.com/courses/search/?q=${searchQuery}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    }
   };
-
-  const feedbackText = getPerformanceFeedbackText();
-
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <div
-          style={{
-            backgroundColor: colors.primary[200],
-            border: `1px solid ${colors.primary[100]}`,
-            borderRadius: 12,
-            padding: 16,
-            marginBottom: 16,
-          }}
-        >
-          <h3
-            style={{
-              color: colors.primary[700],
-              fontWeight: 700,
-              marginBottom: 6,
-            }}
-          >
-            Error
-          </h3>
-          <p style={{ color: colors.primary[700] }}>{error}</p>
-        </div>
-        <button
-          onClick={() => window.location.reload()}
-          style={{
-            backgroundColor: colors.primary[500],
-            color: "#fff",
-            padding: "10px 18px",
-            borderRadius: 8,
-          }}
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
-  // update stat color for Post-Quiz fallback to primary[300]
-
-  const stats = [
-    {
-      icon: <FiTarget className="w-5 h-5" />,
-      label: "Pre-Quiz Score",
-      value: `${quizScore.score}/${quizScore.total}`,
-      percentage: (quizScore.score / quizScore.total) * 100,
-      color: colors.primary[500],
-    },
-    {
-      icon: <FiAward className="w-5 h-5" />,
-      label: "Post-Quiz Score",
-      value: `${quizScore.score}/${quizScore.total}`,
-      percentage: (quizScore.score / quizScore.total) * 100,
-      // replaced accent.purple -> primary[300]
-      color: colors.primary[300],
-    },
-  ];
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -191,77 +262,245 @@ export default function CourseRecommendations({
         message="Generating course recommendations"
       />
 
-      <div className="text-center mb-6">
+      <div className="text-center mb-8">
         <h2
-          style={{ color: colors.primary[700], fontWeight: 800, fontSize: 20 }}
+          style={{
+            color: colors.primary[700],
+            fontWeight: 800,
+            fontSize: 24,
+          }}
         >
-          Recommended Courses
+          Lộ Trình Học Tập Cá Nhân Hóa
         </h2>
-        <p style={{ color: colors.primary[600], opacity: 0.9 }}>
-          Personalized suggestions based on your profile and pre-quiz results
+        <p
+          style={{
+            color: colors.primary[600],
+            opacity: 0.9,
+          }}
+        >
+          Được thiết kế riêng dựa trên phân tích profile và mục tiêu của bạn
         </p>
       </div>
 
-      {/* Performance Summary */}
-      <div
-        style={{
-          backgroundColor: colors.primary[200],
-          border: `1px solid ${colors.primary[100]}`,
-          borderRadius: 12,
-          padding: 14,
-          marginBottom: 18,
-          marginLeft: 50,
-          marginRight: 50,
-        }}
-      >
+      {/* Assessment Section - redesigned styling */}
+      {assessment && (
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 12,
+            backgroundColor: colors.primary[50],
+            border: `2px solid ${colors.success[500]}`,
+            borderRadius: 12,
+            padding: 24,
+            marginBottom: 28,
+            marginLeft: 20,
+            marginRight: 20,
+            boxShadow: "0 8px 24px rgba(16,24,40,0.04)",
           }}
         >
-          <div>
-            <h3 style={{ color: colors.primary[700], fontWeight: 700 }}>
-              Pre-Quiz Result: {quizScore.score}/{quizScore.total} (
-              {Math.round((quizScore.score / quizScore.total) * 100)}%)
-            </h3>
-            <p style={{ color: colors.primary[700], marginTop: 6 }}>
-              {feedbackText}
-            </p>
-          </div>
-          <div style={{ fontSize: 28, color: "#424874" }}>
-            {/* icon based on performance */}
-            {quizScore.score >= Math.ceil(quizScore.total * 0.8) ? (
-              <MdEmojiEvents />
-            ) : quizScore.score >= Math.ceil(quizScore.total * 0.6) ? (
-              <MdThumbUp />
-            ) : (
-              <MdLightbulb />
-            )}
+          <div style={{ display: "flex", gap: 18, alignItems: "flex-start" }}>
+            <div
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: 12,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: `linear-gradient(135deg, ${colors.success[500]}, ${colors.primary[300]})`,
+                color: "#fff",
+                flexShrink: 0,
+              }}
+            >
+              {assessment.icon}
+            </div>
+
+            <div style={{ flex: 1 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  marginBottom: 8,
+                }}
+              >
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: 18,
+                    fontWeight: 800,
+                    color: colors.primary[700],
+                  }}
+                >
+                  Đánh Giá Trình Độ — {assessment.level}
+                </h3>
+                <div
+                  style={{
+                    marginLeft: "auto",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  <div
+                    style={{
+                      background: colors.success[500],
+                      color: "#fff",
+                      padding: "6px 10px",
+                      borderRadius: 999,
+                      fontWeight: 800,
+                      fontSize: 12,
+                    }}
+                  >
+                    {careerGoal}
+                  </div>
+                </div>
+              </div>
+
+              <p
+                style={{
+                  margin: 0,
+                  color: colors.primary[700],
+                  fontWeight: 600,
+                  marginBottom: 16,
+                }}
+              >
+                {assessment.overallFeedback}
+              </p>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3,1fr)",
+                  gap: 18,
+                  marginTop: 6,
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      marginBottom: 8,
+                      color: colors.success[600],
+                      fontWeight: 800,
+                    }}
+                  >
+                    💪 Strengths
+                  </div>
+                  <ul
+                    style={{
+                      margin: 0,
+                      paddingLeft: 18,
+                      color: colors.primary[700],
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {assessment.strengths.map((s, i) => (
+                      <li
+                        key={i}
+                        style={{ marginBottom: 8, display: "flex", gap: 8 }}
+                      >
+                        <MdCheckCircle
+                          style={{ color: colors.success[300], marginTop: 4 }}
+                        />
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      marginBottom: 8,
+                      color: colors.warning[600],
+                      fontWeight: 800,
+                    }}
+                  >
+                    🎯 Areas to improve
+                  </div>
+                  <ul
+                    style={{
+                      margin: 0,
+                      paddingLeft: 18,
+                      color: colors.primary[700],
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {assessment.weaknesses.map((w, i) => (
+                      <li
+                        key={i}
+                        style={{ marginBottom: 8, display: "flex", gap: 8 }}
+                      >
+                        <MdCheckCircle
+                          style={{ color: colors.warning[500], marginTop: 4 }}
+                        />
+                        <span>{w}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      marginBottom: 8,
+                      color: colors.primary[600],
+                      fontWeight: 800,
+                    }}
+                  >
+                    📝 Recommendations
+                  </div>
+                  <ul
+                    style={{
+                      margin: 0,
+                      paddingLeft: 18,
+                      color: colors.primary[700],
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {assessment.recommendations.map((r, i) => (
+                      <li
+                        key={i}
+                        style={{ marginBottom: 8, display: "flex", gap: 8 }}
+                      >
+                        <MdCheckCircle
+                          style={{ color: colors.primary[300], marginTop: 4 }}
+                        />
+                        <span>{r}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Course Grid - updated styles: blue palette, larger gap, better card content */}
+      {/* Course Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         {courses.map((course, index) => {
           const isSelected = selectedCourse === course.course_title;
 
-          // fallback arrays when course doesn't provide structured fields
           const outcomes = (course as any).outcomes ?? [
-            "Understand core concepts",
-            "Build a small real-world project",
-            "Deploy to production",
+            "Hiểu sâu các khái niệm cốt lõi",
+            "Xây dựng dự án thực tế",
+            "Triển khai ứng dụng production",
           ];
           const requirements = (course as any).requirements ?? [
-            "Basic programming knowledge",
-            "Familiarity with web fundamentals",
+            "Kiến thức lập trình cơ bản",
+            "Hiểu biết về web fundamentals",
           ];
           const audience = (course as any).audience ?? [
-            "Beginners aiming for Backend roles",
-            "Junior devs seeking practical experience",
+            "Developer muốn chuyên sâu Backend",
+            "Junior dev muốn nâng cao kỹ năng thực tế",
           ];
 
           return (
@@ -274,9 +513,8 @@ export default function CourseRecommendations({
               className="p-5 cursor-pointer transition-all"
               style={{
                 marginBottom: 20,
-                marginLeft: 50,
-                marginRight: 50,
-                // border: `1px solid ${colors.neutral[200]}`,
+                marginLeft: 20,
+                marginRight: 20,
               }}
             >
               <div
@@ -290,33 +528,34 @@ export default function CourseRecommendations({
                   gap: 16,
                 }}
               >
-                {/* Title */}
+                {/* Title với Link */}
                 <div>
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: 18,
-                      fontWeight: 900,
-                      color: colors.primary[700],
-                    }}
-                  >
-                    {course.course_title}
-                  </h3>
+                  <div className="flex items-start justify-between gap-2">
+                    <h3
+                      style={{
+                        margin: 0,
+                        fontSize: 18,
+                        fontWeight: 900,
+                        color: colors.primary[700],
+                        flex: 1,
+                      }}
+                    >
+                      {course.course_title}
+                    </h3>
+                  </div>
                   <p
                     style={{
                       margin: "8px 0 0",
                       color: colors.neutral[500],
                       fontSize: 14,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
+                      lineHeight: 1.4,
                     }}
                   >
                     {course.text}
                   </p>
                 </div>
 
-                {/* Metadata row translated */}
+                {/* Metadata row */}
                 <div
                   style={{
                     display: "flex",
@@ -337,14 +576,9 @@ export default function CourseRecommendations({
                       border: `1px solid ${colors.primary[100]}`,
                     }}
                   >
-                    <MdPerson style={{ color: colors.primary[600] }} />
-                    <span
-                      style={{ fontWeight: 700, color: colors.primary[700] }}
-                    >
-                      Instructor
-                    </span>
-                    <span style={{ color: colors.primary[600], marginLeft: 6 }}>
-                      Expert Instructor
+                    <MdPerson style={{ color: colors.primary[600] }} />{" "}
+                    <span style={{ color: colors.primary[600] }}>
+                      {course.instructor || "Expert Instructor"}
                     </span>
                   </div>
                   <div
@@ -359,7 +593,9 @@ export default function CourseRecommendations({
                     }}
                   >
                     <MdStar style={{ color: colors.primary[600] }} />{" "}
-                    <strong style={{ color: colors.primary[700] }}>4.6</strong>
+                    <strong style={{ color: colors.primary[700] }}>
+                      {course.rating || 4.6}
+                    </strong>
                   </div>
                   <div
                     style={{
@@ -376,7 +612,7 @@ export default function CourseRecommendations({
                     <span
                       style={{ color: colors.primary[700], fontWeight: 700 }}
                     >
-                      12h
+                      {course.duration || "12h"}
                     </span>
                   </div>
                   <div
@@ -396,12 +632,12 @@ export default function CourseRecommendations({
                       Level
                     </span>{" "}
                     <strong style={{ color: colors.primary[700] }}>
-                      Intermediate
+                      {course.level || "Intermediate"}
                     </strong>
                   </div>
                 </div>
 
-                {/* Two-column details: Outcomes / Requirements / Audience — translate headings */}
+                {/* Course Details */}
                 <div
                   style={{
                     display: "grid",
@@ -418,7 +654,7 @@ export default function CourseRecommendations({
                         marginBottom: 8,
                       }}
                     >
-                      Learning Outcomes
+                      Bạn sẽ học được gì
                     </div>
                     <ul
                       style={{
@@ -458,7 +694,7 @@ export default function CourseRecommendations({
                         marginBottom: 8,
                       }}
                     >
-                      Requirements
+                      Yêu cầu
                     </div>
                     <ul
                       style={{
@@ -497,7 +733,7 @@ export default function CourseRecommendations({
                         marginBottom: 8,
                       }}
                     >
-                      Target Audience
+                      Dành cho ai
                     </div>
                     <ul
                       style={{
@@ -530,7 +766,6 @@ export default function CourseRecommendations({
                   </div>
                 </div>
 
-                {/* KEEP "Why this fits you" block but in English */}
                 {isSelected && (
                   <div
                     style={{
@@ -551,7 +786,7 @@ export default function CourseRecommendations({
                         margin: 0,
                       }}
                     >
-                      Why this is a good fit
+                      Tại sao phù hợp với bạn?
                     </h4>
                     <ul
                       style={{
@@ -561,14 +796,14 @@ export default function CourseRecommendations({
                       }}
                     >
                       <li style={{ marginBottom: 6 }}>
-                        Matches your goal to become{" "}
+                        Phù hợp với mục tiêu trở thành{" "}
                         <strong>{careerGoal}</strong>
                       </li>
                       <li style={{ marginBottom: 6 }}>
-                        Addresses gaps found in your quiz
+                        Bổ sung kiến thức theo đánh giá trình độ
                       </li>
                       <li style={{ marginBottom: 6 }}>
-                        Aligns with your current experience
+                        Phát triển các kỹ năng bạn cần cải thiện
                       </li>
                     </ul>
 
@@ -576,21 +811,9 @@ export default function CourseRecommendations({
                       <Button
                         size="md"
                         variant="primary"
-                        onClick={() => {
-                          /* start learning */
-                        }}
+                        onClick={() => handleStartLearning(course)}
                       >
-                        <MdMenuBook /> <span>Start Learning Now</span>
-                      </Button>
-
-                      <Button
-                        size="md"
-                        variant="outline"
-                        onClick={() => {
-                          /* view syllabus */
-                        }}
-                      >
-                        <MdInfo /> <span>View Detailed Syllabus</span>
+                        <MdOpenInNew /> <span>Start learning now</span>
                       </Button>
                     </div>
                   </div>
@@ -601,7 +824,7 @@ export default function CourseRecommendations({
         })}
       </div>
 
-      {/* Action Buttons translated */}
+      {/* Action Buttons */}
       <div
         style={{
           marginTop: 18,
@@ -609,23 +832,23 @@ export default function CourseRecommendations({
           gap: 12,
           justifyContent: "space-between",
           flexWrap: "wrap",
-          marginLeft: 50,
-          marginRight: 50,
+          marginLeft: 20,
+          marginRight: 20,
         }}
       >
         <Button variant="outline" onClick={onRetakeQuiz}>
-          <MdMenuBook /> <span>Retake Pre-Quiz</span>
+          <MdMenuBook /> <span>AI analize again</span>
         </Button>
         <div style={{ display: "flex", gap: 8 }}>
           <Button
             variant="outline"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <MdSearch /> <span>Review profile</span>
+            <MdSearch /> <span>Go to watch AI's analysis</span>
           </Button>
           <Button variant="primary" onClick={onContinue}>
-            Continue to Post-Quiz{" "}
-            <span style={{ fontSize: 12, marginLeft: 8 }}>(Post-Quiz)</span>
+            Continue study{" "}
+            <span style={{ fontSize: 12, marginLeft: 8 }}>(Final Test)</span>
           </Button>
         </div>
       </div>

@@ -15,6 +15,11 @@ export interface Course {
   course_title: string;
   text: string;
   similarity?: number;
+  url?: string;
+  instructor?: string;
+  level?: string;
+  rating?: number;
+  duration?: string;
 }
 
 export interface QuizResponse {
