@@ -169,77 +169,95 @@ export default function CompletionScreen({
         </p>
       </motion.div>
 
-      {/* Stats Grid */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8 mt-8">
-        {stats.map((stat, index) => (
+      {/* Compact Stats Row: Post-Quiz & Improvement (larger cards) */}
+      <div
+        style={{
+          display: "flex",
+          gap: 18,
+          justifyContent: "center",
+          alignItems: "stretch",
+          marginBottom: 28,
+          flexWrap: "wrap",
+        }}
+      >
+        {stats.map((stat, idx) => (
           <motion.div
             key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.08 }}
+            transition={{ duration: 0.45, delay: idx * 0.06 }}
+            style={{ minWidth: 280, maxWidth: 380 }}
           >
             <Card
               hover
-              padding="lg"
-              className="text-center"
+              padding="md"
+              className="text-left"
               style={{
-                margin: 20,
+                margin: 10,
                 border: `1px solid ${colors.neutral[200]}`,
-                borderRadius: 12,
+                borderRadius: 14,
+                display: "flex",
+                gap: 16,
+                alignItems: "center",
+                padding: "16px 18px",
+                background: colors.primary[50],
               }}
             >
               <div
-                className="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center text-white"
-                style={{ backgroundColor: stat.color }}
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 12,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: stat.color,
+                  color: "#fff",
+                  flexShrink: 0,
+                  fontSize: 22,
+                }}
               >
                 {stat.icon}
               </div>
 
-              <div
-                style={{
-                  fontSize: 20,
-                  fontWeight: 700,
-                  color: colors.primary[700],
-                  marginBottom: 8,
-                }}
-              >
-                {stat.value}
-              </div>
-
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: colors.neutral[600],
-                  marginBottom: 12,
-                }}
-              >
-                {stat.label}
-              </div>
-
-              {/* Progress Bar */}
-              <div
-                style={{
-                  width: "100%",
-                  background: colors.neutral[200],
-                  borderRadius: 999,
-                  height: 8,
-                  marginBottom: 8,
-                }}
-              >
+              <div style={{ flex: 1 }}>
                 <div
                   style={{
-                    height: "100%",
-                    borderRadius: 999,
-                    transition: "width 1s ease",
-                    width: `${stat.percentage}%`,
-                    background: stat.color,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "baseline",
+                    gap: 12,
                   }}
-                />
-              </div>
-
-              <div style={{ fontSize: 12, color: colors.neutral[500] }}>
-                {stat.percentage}%
+                >
+                  <div
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 900,
+                      color: colors.primary[700],
+                      lineHeight: 1,
+                    }}
+                  >
+                    {stat.value}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 14,
+                      color: colors.neutral[500],
+                      fontWeight: 700,
+                    }}
+                  >
+                    {`${stat.percentage}%`}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: 13,
+                    color: colors.neutral[600],
+                    marginTop: 8,
+                  }}
+                >
+                  {stat.label}
+                </div>
               </div>
             </Card>
           </motion.div>
@@ -450,6 +468,7 @@ export default function CompletionScreen({
                   margin: 20,
                   border: `1px solid ${colors.neutral[200]}`,
                   borderRadius: 20,
+                  paddingTop: 30,
                 }}
               >
                 <div
@@ -484,25 +503,53 @@ export default function CompletionScreen({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.6 }}
-        className="flex flex-row sm:flex-row gap-4 justify-center items-center space-x-8"
+        style={{
+          display: "flex",
+          gap: 16,
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 18,
+          flexWrap: "wrap",
+        }}
       >
-        <Button size="lg" onClick={onViewCourses} className="group">
-          <MdSchool className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+        <Button
+          size="md"
+          onClick={onViewCourses}
+          style={{
+            minWidth: 160,
+            display: "inline-flex",
+            justifyContent: "center",
+          }}
+        >
+          <MdSchool style={{ width: 18, height: 18, marginRight: 8 }} />
           View Recommended Courses
         </Button>
 
         <Button
           variant="outline"
-          size="lg"
+          size="md"
           onClick={onRestart}
-          className="group"
+          style={{
+            minWidth: 120,
+            display: "inline-flex",
+            justifyContent: "center",
+          }}
         >
-          <MdReplay className="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform" />
+          <MdReplay style={{ width: 18, height: 18, marginRight: 8 }} />
           Restart
         </Button>
 
-        <Button variant="ghost" size="lg" onClick={() => window.print()}>
-          <MdShare className="w-5 h-5 mr-2" />
+        <Button
+          variant="ghost"
+          size="md"
+          onClick={() => window.print()}
+          style={{
+            minWidth: 120,
+            display: "inline-flex",
+            justifyContent: "center",
+          }}
+        >
+          <MdShare style={{ width: 18, height: 18, marginRight: 8 }} />
           Share Results
         </Button>
       </motion.div>
