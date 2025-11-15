@@ -66,10 +66,12 @@ export default function Layout({
       style={{
         backgroundColor: colors.primary[50],
         fontFamily: "Inter, Roboto, sans-serif",
+        height: "100vh", // force full viewport height
+        overflow: "hidden", // prevent scrolling
       }}
       className="min-h-screen py-6"
     >
-      <div className="mx-auto px-4 max-w-5xl">
+      <div className="mx-auto px-4 max-w-5xl" style={{ height: "100%" }}>
         {/* Header - centered, single title */}
         <header className="text-center mb-6 px-4">
           <div className="inline-flex items-center justify-center gap-3">
@@ -232,7 +234,12 @@ export default function Layout({
         {/* Main content wrapper */}
         <main
           className="rounded-2xl p-6 md:p-8"
-          style={{ backgroundColor: colors.primary[50], marginTop: 30 }}
+          style={{
+            backgroundColor: colors.primary[50],
+            marginTop: 30,
+            height: "calc(100% - 240px)",
+            overflow: "hidden",
+          }}
         >
           {children}
         </main>

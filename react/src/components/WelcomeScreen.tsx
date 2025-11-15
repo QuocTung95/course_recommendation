@@ -11,6 +11,7 @@ import {
 } from "react-icons/md";
 import Button from "./ui/Button";
 import { colors, gradients, shadows } from "@/theme/colors";
+import { useEffect, useState } from "react";
 
 interface WelcomeScreenProps {
   onGetStarted: () => void;
@@ -37,9 +38,38 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
     },
   ];
 
+  // --- new CountUp helper (simple and smooth)
+  const CountUp: React.FC<{
+    end: number;
+    duration?: number;
+    format?: (n: number) => string;
+  }> = ({ end, duration = 1200, format }) => {
+    const [value, setValue] = useState(0);
+    useEffect(() => {
+      let start: number | null = null;
+      let rafId: number;
+      const step = (timestamp: number) => {
+        if (!start) start = timestamp;
+        const elapsed = timestamp - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const current = Math.round(progress * end);
+        setValue(current);
+        if (progress < 1) rafId = requestAnimationFrame(step);
+      };
+      rafId = requestAnimationFrame(step);
+      return () => cancelAnimationFrame(rafId);
+    }, [end, duration]);
+    return (
+      <span style={{ fontWeight: 900 }}>{format ? format(value) : value}</span>
+    );
+  };
+
+  // condensed features (icons + title only) used directly under hero
+  const condensed = features.map((f) => ({ icon: f.icon, title: f.title }));
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Hero */}
+    <div className="max-w-6xl mx-auto px-4 py-8" style={{ height: "100%" }}>
+      {/* Hero — keep title/CTA, remove hero description text */}
       <motion.div
         initial="hidden"
         animate="show"
@@ -181,19 +211,6 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
               paths
             </h1>
 
-            <p
-              style={{
-                maxWidth: 820,
-                margin: "0 auto 28px",
-                fontSize: 16,
-                opacity: 0.95,
-              }}
-            >
-              Analyze your CV with AI, generate a tailored pre-quiz, and get
-              course recommendations — start your smarter learning journey
-              today.
-            </p>
-
             {/* SINGLE MAIN CTA - centered and prominent */}
             <div
               style={{
@@ -224,91 +241,154 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
         </motion.section>
       </motion.div>
 
-      {/* Features Grid */}
-      <div className="grid md:grid-cols-3 gap-6 mb-12">
-        {features.map((feature, index) => (
-          <motion.div
-            key={feature.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
+      {/* Condensed features row (icons + titles only) */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 24,
+          marginTop: 20,
+          marginBottom: 28,
+        }}
+      >
+        {condensed.map((f, i) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 10,
+              minWidth: 160,
+            }}
           >
             <div
               style={{
-                padding: "24px",
+                width: 64,
+                height: 64,
                 borderRadius: 12,
-                background: "rgba(255,255,255,0.1)",
-                backdropFilter: "blur(8px)",
-                border: `1px solid ${colors.neutral[200]}`,
-                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                transition: "transform 0.3s",
-                margin: 20,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: `linear-gradient(135deg, ${colors.primary[100]}, ${colors.primary[200]})`,
+                color: colors.primary[600],
+                boxShadow: "0 8px 30px rgba(16,24,40,0.06)",
               }}
-              className="hover:scale-[1.02] cursor-pointer"
             >
-              <div
-                style={{
-                  width: 48,
-                  height: 48,
-                  margin: "0 auto 12px",
-                  borderRadius: 12,
-                  background: `linear-gradient(135deg, ${colors.primary[100]}, ${colors.primary[200]})`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: colors.primary[600],
-                }}
-              >
-                {feature.icon}
-              </div>
-              <h3
-                style={{
-                  fontSize: 16,
-                  fontWeight: 700,
-                  color: colors.primary[700],
-                  marginBottom: 8,
-                }}
-              >
-                {feature.title}
-              </h3>
-              <p style={{ color: colors.neutral[600], fontSize: 14 }}>
-                {feature.description}
-              </p>
+              {f.icon}
             </div>
-          </motion.div>
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 800,
+                color: colors.primary[700],
+              }}
+            >
+              {f.title}
+            </div>
+          </div>
         ))}
       </div>
 
-      {/* Stats Section (no template strings) */}
-      <motion.div
-        className="text-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
+      {/* Bottom stats — three cards with icon + animated number + short label */}
+      <div
+        style={{
+          display: "flex",
+          gap: 18,
+          justifyContent: "center",
+          marginTop: 12,
+        }}
       >
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
-          {[
-            { number: "500+", label: "Khóa học" },
-            { number: "10K+", label: "Người dùng" },
-            { number: "95%", label: "Hài lòng" },
-            { number: "2.5x", label: "Tiến bộ" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div
-                style={{
-                  fontSize: 20,
-                  fontWeight: 800,
-                  color: colors.primary[600],
-                  marginBottom: 6,
-                }}
-              >
-                {stat.number}
-              </div>
-              <div style={{ color: colors.neutral[500] }}>{stat.label}</div>
+        {/* Courses card */}
+        <div
+          style={{
+            width: 260,
+            borderRadius: 14,
+            padding: 20,
+            background: `linear-gradient(135deg, ${colors.primary[300]}, ${colors.primary[400]})`,
+            color: "#fff",
+            boxShadow: "0 12px 40px rgba(16,24,40,0.12)",
+            transition: "transform .18s ease",
+          }}
+          className="hover:scale-[1.02]"
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ fontSize: 34, lineHeight: 1 }}>
+              {/* icon */}
+              <MdFolder style={{ color: "#fff" }} />
             </div>
-          ))}
+            <div style={{ textAlign: "right", flex: 1 }}>
+              <div style={{ fontSize: 28 }}>
+                <CountUp end={500} duration={1300} format={(n) => `${n}+`} />
+              </div>
+              <div style={{ fontSize: 13, opacity: 0.9 }}>Courses</div>
+            </div>
+          </div>
         </div>
-      </motion.div>
+
+        {/* Users card */}
+        <div
+          style={{
+            width: 260,
+            borderRadius: 14,
+            padding: 20,
+            background: `linear-gradient(135deg, ${colors.primary[200]}, ${colors.primary[300]})`,
+            color: "#fff",
+            boxShadow: "0 12px 40px rgba(16,24,40,0.12)",
+          }}
+          className="hover:scale-[1.02]"
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ fontSize: 34 }}>
+              {/* icon */}
+              <MdRocketLaunch style={{ color: "#fff" }} />
+            </div>
+            <div style={{ textAlign: "right", flex: 1 }}>
+              <div style={{ fontSize: 28 }}>
+                <CountUp
+                  end={10000}
+                  duration={1500}
+                  format={(n) => `${n.toLocaleString()}`}
+                />
+              </div>
+              <div style={{ fontSize: 13, opacity: 0.9 }}>Users</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress card */}
+        <div
+          style={{
+            width: 260,
+            borderRadius: 14,
+            padding: 20,
+            background: `linear-gradient(135deg, ${colors.primary[100]}, ${colors.primary[200]})`,
+            color: "#fff",
+            boxShadow: "0 12px 40px rgba(16,24,40,0.12)",
+          }}
+          className="hover:scale-[1.02]"
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ fontSize: 34 }}>
+              {/* icon */}
+              <MdTrendingUp style={{ color: "#fff" }} />
+            </div>
+            <div style={{ textAlign: "right", flex: 1 }}>
+              <div style={{ fontSize: 28 }}>
+                <CountUp
+                  end={250}
+                  duration={1300}
+                  format={(n) => `${(n / 100).toFixed(2)}x`}
+                />
+              </div>
+              <div style={{ fontSize: 13, opacity: 0.9 }}>Average Progress</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* preserve any remaining layout spacing if needed */}
+      <div style={{ height: 24 }} />
     </div>
   );
 }
