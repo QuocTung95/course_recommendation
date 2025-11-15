@@ -379,8 +379,8 @@ MỤC TIÊU NGHỀ NGHIỆP:
       </svg>
 
       <div className="max-w-4xl mx-auto relative" style={{ zIndex: 2 }}>
-        {/* show full-screen loading overlay while analyzing */}
-        {isAnalyzing && <FullScreenLoader message="Đang phân tích..." />}
+        {/* show full-screen loading overlay while analyzing (always mounted) */}
+        <FullScreenLoader active={isAnalyzing} message="Đang phân tích" />
 
         <div style={{ textAlign: "center", marginBottom: 18 }}>
           <h2

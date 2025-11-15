@@ -126,10 +126,6 @@ export default function CourseRecommendations({
 
   const feedbackText = getPerformanceFeedbackText();
 
-  if (isLoading) {
-    return <FullScreenLoader message="Loading... Đang gợi ý khóa học" />;
-  }
-
   if (error) {
     return (
       <div className="text-center py-12">
@@ -190,6 +186,8 @@ export default function CourseRecommendations({
 
   return (
     <div className="max-w-5xl mx-auto">
+      <FullScreenLoader active={isLoading} message="Đang gợi ý khóa học" />
+
       <div className="text-center mb-6">
         <h2
           style={{

@@ -167,295 +167,173 @@ export default function QuizComponent({
       ? "Pre-Quiz - Kiểm tra trình độ hiện tại"
       : "Post-Quiz - Kiểm tra sau khi học";
 
-  if (isLoading) {
-    return <FullScreenLoader message="Đang tạo đề kiểm tra ..." />;
-  }
-
-  if (showResult) {
-    const total = quizQuestions.length || 1;
-    const pct = Math.round((score / total) * 100);
-    return (
-      <div className="text-center py-8">
-        <div
-          style={{
-            width: 96,
-            height: 96,
-            borderRadius: 48,
-            margin: "0 auto 12px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: pct >= 70 ? "#A6B1E1" : "#DCD6F7",
-            color: "#424874",
-            transform: "scale(1.03)",
-            transition: "all .3s",
-          }}
-        >
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 700 }}>
-              {score}/{total}
-            </div>
-            <div style={{ fontSize: 12, color: "#424874", opacity: 0.9 }}>
-              {pct}%
-            </div>
-          </div>
-        </div>
-
-        <h2 style={{ color: "#424874", fontWeight: 800, marginBottom: 8 }}>
-          {getQuizTitle()} - Hoàn thành!
-        </h2>
-
-        <div style={{ color: "#424874", marginBottom: 16 }}>
-          {pct >= 70 ? (
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                justifyContent: "center",
-              }}
-            >
-              <MdEmojiEvents size={20} color="#424874" />{" "}
-              <span>Bạn có nền tảng khá tốt!</span>
-            </div>
-          ) : (
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                justifyContent: "center",
-              }}
-            >
-              <MdReplay size={20} color="#424874" />{" "}
-              <span>Hãy tiếp tục học tập và ôn luyện!</span>
-            </div>
-          )}
-        </div>
-
-        <div
-          style={{
-            backgroundColor: "#F4EEFF",
-            border: "1px solid #A6B1E1",
-            borderRadius: 10,
-            padding: 16,
-            marginBottom: 16,
-          }}
-        >
-          <h3 style={{ color: "#424874", fontWeight: 700, marginBottom: 8 }}>
-            Thống kê kết quả:
-          </h3>
-          <div style={{ display: "flex", gap: 12 }}>
-            <div style={{ flex: 1, textAlign: "center" }}>
-              <div style={{ fontSize: 20, fontWeight: 700, color: "#424874" }}>
-                {score}
-              </div>
-              <div style={{ color: "#424874", opacity: 0.9 }}>Câu đúng</div>
-            </div>
-            <div style={{ flex: 1, textAlign: "center" }}>
-              <div style={{ fontSize: 20, fontWeight: 700, color: "#424874" }}>
-                {total - score}
-              </div>
-              <div style={{ color: "#424874", opacity: 0.9 }}>Câu sai</div>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "center", gap: 12 }}>
-          <button
-            onClick={() => onComplete(score, total)}
-            style={{
-              padding: "10px 16px",
-              borderRadius: 8,
-              backgroundColor: "#424874",
-              color: "#fff",
-            }}
-          >
-            {quizType === "pre-quiz"
-              ? "Xem Khóa Học Được Gợi Ý →"
-              : "Xem Kết Quả Tổng Quan →"}
-          </button>
-          <button
-            onClick={() => {
-              setShowResult(false);
-              setCurrentQuestion(0);
-              setSelectedAnswer("");
-              setScore(0);
-            }}
-            style={{
-              padding: "10px 14px",
-              borderRadius: 8,
-              backgroundColor: "#F4EEFF",
-              border: "1px solid #A6B1E1",
-              color: "#424874",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <MdReplay /> <span>Làm lại</span>
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   const currentQ = quizQuestions[currentQuestion];
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 16,
-        }}
-      >
-        <h2 style={{ color: "#424874", fontWeight: 800 }}>{getQuizTitle()}</h2>
-        <div style={{ color: "#424874", opacity: 0.9 }}>
-          Câu {currentQuestion + 1}/{quizQuestions.length}
-        </div>
-      </div>
+      <FullScreenLoader active={isLoading} message="Đang tạo đề kiểm tra" />
 
-      {/* Progress bar animated - use theme blue instead of purple */}
-      <div
-        style={{
-          width: "100%",
-          backgroundColor: colors.primary[100], // was purple
-          height: 8,
-          borderRadius: 999,
-          marginBottom: 16,
-        }}
-      >
-        <div
-          style={{
-            width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%`,
-            height: "100%",
-            backgroundColor: colors.primary[400], // stronger blue fill
-            borderRadius: 999,
-            transition: "width .5s ease",
-          }}
-        />
-      </div>
-
-      {/* Question with slide/fade */}
-      <div
-        style={{
-          backgroundColor: colors.primary[50],
-          border: `1px solid ${colors.primary[100]}`,
-          borderRadius: 10,
-          padding: 16,
-          marginBottom: 16,
-          overflow: "hidden",
-        }}
-      >
-        <div style={questionAnimStyle(!transitioning)}>
-          <h3
+      {/* If still loading you may render a minimal placeholder; overlay covers it */}
+      {!isLoading && (
+        <>
+          <div
             style={{
-              color: colors.primary[700],
-              fontWeight: 700,
-              marginBottom: 12,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 16,
             }}
           >
-            {currentQ.question}
-          </h3>
-
-          <div style={{ display: "grid", gap: 10 }}>
-            {currentQ.options.map((option, index) => {
-              const optKey = option.charAt(0);
-              const isSelected = selectedAnswer === optKey;
-              const isHovered = hoveredOption === index; // NEW
-              // compute dynamic colors
-              const optionBg = isSelected
-                ? colors.primary[300]
-                : isHovered
-                ? colors.primary[100]
-                : colors.primary[50];
-              const optionBorder = isSelected
-                ? colors.primary[400]
-                : isHovered
-                ? colors.primary[300]
-                : colors.primary[100];
-              const badgeBg = isSelected
-                ? colors.primary[600]
-                : colors.primary[100];
-              const badgeColor = isSelected ? "#fff" : colors.primary[700];
-
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleAnswerSelect(optKey)}
-                  aria-pressed={isSelected}
-                  onMouseEnter={() => setHoveredOption(index)} // NEW
-                  onMouseLeave={() => setHoveredOption(null)} // NEW
-                  style={{
-                    display: "flex",
-                    gap: 12,
-                    alignItems: "center",
-                    padding: 12,
-                    borderRadius: 12,
-                    border: `1px solid ${optionBorder}`,
-                    backgroundColor: optionBg,
-                    color: colors.primary[800],
-                    textAlign: "left",
-                    boxShadow: isSelected
-                      ? "0 6px 18px rgba(50,82,145,0.12)"
-                      : "none",
-                    transition: "all .18s ease",
-                    cursor: "pointer",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 20,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: badgeBg,
-                      color: badgeColor,
-                      fontWeight: 700,
-                    }}
-                  >
-                    {optKey}
-                  </div>
-                  <div style={{ flex: 1 }}>{option}</div>
-                </button>
-              );
-            })}
+            <h2 style={{ color: "#424874", fontWeight: 800 }}>
+              {getQuizTitle()}
+            </h2>
+            <div style={{ color: "#424874", opacity: 0.9 }}>
+              Câu {currentQuestion + 1}/{quizQuestions.length}
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Navigation (use Button for consistent styling) */}
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Button
-          variant="outline"
-          size="md"
-          onClick={() =>
-            currentQuestion > 0 && setCurrentQuestion(currentQuestion - 1)
-          }
-          disabled={currentQuestion === 0}
-        >
-          ← Câu trước
-        </Button>
+          {/* Progress bar animated - use theme blue instead of purple */}
+          <div
+            style={{
+              width: "100%",
+              backgroundColor: colors.primary[100], // was purple
+              height: 8,
+              borderRadius: 999,
+              marginBottom: 16,
+            }}
+          >
+            <div
+              style={{
+                width: `${
+                  ((currentQuestion + 1) / quizQuestions.length) * 100
+                }%`,
+                height: "100%",
+                backgroundColor: colors.primary[400], // stronger blue fill
+                borderRadius: 999,
+                transition: "width .5s ease",
+              }}
+            />
+          </div>
 
-        <Button
-          variant="primary"
-          size="md"
-          onClick={goToNext}
-          disabled={!selectedAnswer}
-        >
-          {currentQuestion === quizQuestions.length - 1
-            ? "Kết thúc →"
-            : "Câu tiếp theo →"}
-        </Button>
-      </div>
+          {/* Question with slide/fade */}
+          <div
+            style={{
+              backgroundColor: colors.primary[50],
+              border: `1px solid ${colors.primary[100]}`,
+              borderRadius: 10,
+              padding: 16,
+              marginBottom: 16,
+              overflow: "hidden",
+            }}
+          >
+            <div style={questionAnimStyle(!transitioning)}>
+              <h3
+                style={{
+                  color: colors.primary[700],
+                  fontWeight: 700,
+                  marginBottom: 12,
+                }}
+              >
+                {currentQ.question}
+              </h3>
 
-      {/* no external hover CSS needed because hover handled inline via hoveredOption */}
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+              <div style={{ display: "grid", gap: 10 }}>
+                {currentQ.options.map((option, index) => {
+                  const optKey = option.charAt(0);
+                  const isSelected = selectedAnswer === optKey;
+                  const isHovered = hoveredOption === index; // NEW
+                  // compute dynamic colors
+                  const optionBg = isSelected
+                    ? colors.primary[300]
+                    : isHovered
+                    ? colors.primary[100]
+                    : colors.primary[50];
+                  const optionBorder = isSelected
+                    ? colors.primary[400]
+                    : isHovered
+                    ? colors.primary[300]
+                    : colors.primary[100];
+                  const badgeBg = isSelected
+                    ? colors.primary[600]
+                    : colors.primary[100];
+                  const badgeColor = isSelected ? "#fff" : colors.primary[700];
+
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleAnswerSelect(optKey)}
+                      aria-pressed={isSelected}
+                      onMouseEnter={() => setHoveredOption(index)} // NEW
+                      onMouseLeave={() => setHoveredOption(null)} // NEW
+                      style={{
+                        display: "flex",
+                        gap: 12,
+                        alignItems: "center",
+                        padding: 12,
+                        borderRadius: 12,
+                        border: `1px solid ${optionBorder}`,
+                        backgroundColor: optionBg,
+                        color: colors.primary[800],
+                        textAlign: "left",
+                        boxShadow: isSelected
+                          ? "0 6px 18px rgba(50,82,145,0.12)"
+                          : "none",
+                        transition: "all .18s ease",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 20,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: badgeBg,
+                          color: badgeColor,
+                          fontWeight: 700,
+                        }}
+                      >
+                        {optKey}
+                      </div>
+                      <div style={{ flex: 1 }}>{option}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation (use Button for consistent styling) */}
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Button
+              variant="outline"
+              size="md"
+              onClick={() =>
+                currentQuestion > 0 && setCurrentQuestion(currentQuestion - 1)
+              }
+              disabled={currentQuestion === 0}
+            >
+              ← Câu trước
+            </Button>
+
+            <Button
+              variant="primary"
+              size="md"
+              onClick={goToNext}
+              disabled={!selectedAnswer}
+            >
+              {currentQuestion === quizQuestions.length - 1
+                ? "Kết thúc →"
+                : "Câu tiếp theo →"}
+            </Button>
+          </div>
+
+          {/* no external hover CSS needed because hover handled inline via hoveredOption */}
+          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+        </>
+      )}
     </div>
   );
 }
