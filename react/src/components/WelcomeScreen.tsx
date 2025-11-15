@@ -2,13 +2,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  MdRocketLaunch,
-  MdFolder,
-  MdSchool,
-  MdTrendingUp,
-  MdAutoAwesome,
-} from "react-icons/md";
+import { MdRocketLaunch, MdFolder, MdSchool, MdTrendingUp, MdAutoAwesome } from "react-icons/md";
 import Button from "./ui/Button";
 import { colors, gradients, shadows } from "@/theme/colors";
 
@@ -21,8 +15,7 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
     {
       icon: <MdAutoAwesome className="w-6 h-6" />,
       title: "AI-Powered Analysis",
-      description:
-        "Automatically analyze your CV to understand your skills and experience",
+      description: "Automatically analyze your CV to understand your skills and experience",
     },
     {
       icon: <MdSchool className="w-6 h-6" />,
@@ -32,8 +25,7 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
     {
       icon: <MdTrendingUp className="w-6 h-6" />,
       title: "Progress Tracking",
-      description:
-        "Track progress with pre- and post-quizzes to measure improvement",
+      description: "Track progress with pre- and post-quizzes to measure improvement",
     },
   ];
 
@@ -109,10 +101,7 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
             viewBox="0 0 260 160"
             fill="none"
           >
-            <path
-              d="M0 80 C60 0, 200 0, 260 80 L260 160 L0 160 Z"
-              fill="white"
-            />
+            <path d="M0 80 C60 0, 200 0, 260 80 L260 160 L0 160 Z" fill="white" />
           </svg>
 
           {/* NEW: large illustrative AI robot/chip on left for vibe */}
@@ -132,11 +121,7 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
           >
             {/* stylized robot / chip */}
             <rect x="12" y="12" width="196" height="196" rx="28" fill="white" />
-            <g
-              transform="translate(34,34)"
-              stroke="rgba(0,0,0,0.06)"
-              strokeWidth="4"
-            >
+            <g transform="translate(34,34)" stroke="rgba(0,0,0,0.06)" strokeWidth="4">
               <rect x="0" y="0" width="132" height="132" rx="18" fill="none" />
               <circle cx="22" cy="22" r="10" fill="rgba(0,0,0,0.06)" />
               <path d="M10 70h112M10 90h112M30 30v80" strokeLinecap="round" />
@@ -177,8 +162,7 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
                 fontWeight: 900,
               }}
             >
-              Explore a world of learning — AI-powered personalized learning
-              paths
+              Explore a world of learning — AI-powered personalized learning paths
             </h1>
 
             <p
@@ -189,9 +173,8 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
                 opacity: 0.95,
               }}
             >
-              Analyze your CV with AI, generate a tailored pre-quiz, and get
-              course recommendations — start your smarter learning journey
-              today.
+              Analyze your CV with AI, generate a tailored pre-quiz, and get course recommendations — start your smarter
+              learning journey today.
             </p>
 
             {/* SINGLE MAIN CTA - centered and prominent */}
@@ -203,14 +186,8 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
                 marginTop: 8,
               }}
             >
-              <Button
-                size="lg"
-                variant="primary"
-                onClick={onGetStarted}
-                className="cta-hero"
-              >
-                <MdRocketLaunch size={22} />{" "}
-                <span style={{ marginLeft: 12 }}>Analyze & Continue</span>
+              <Button size="lg" variant="primary" onClick={onGetStarted} className="cta-hero">
+                <MdRocketLaunch size={22} /> <span style={{ marginLeft: 12 }}>Analyze & Continue</span>
               </Button>
             </div>
           </div>
@@ -271,9 +248,7 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
               >
                 {feature.title}
               </h3>
-              <p style={{ color: colors.neutral[600], fontSize: 14 }}>
-                {feature.description}
-              </p>
+              <p style={{ color: colors.neutral[600], fontSize: 14 }}>{feature.description}</p>
             </div>
           </motion.div>
         ))}
@@ -288,10 +263,10 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
       >
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
           {[
-            { number: "500+", label: "Khóa học" },
-            { number: "10K+", label: "Người dùng" },
-            { number: "95%", label: "Hài lòng" },
-            { number: "2.5x", label: "Tiến bộ" },
+            { number: "24k", label: "Courses" },
+            { number: "10K+", label: "Users" },
+            { number: "95%", label: "Satisfied" },
+            { number: "2.5x", label: "Progress" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <div
