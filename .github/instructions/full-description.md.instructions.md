@@ -1,4 +1,4 @@
-# 🎯 RAG Learning Assistant - Hệ Thống Đề Xuất Khóa Học Thông Minh
+# 🎯 Learning Assistant - Hệ Thống Đề Xuất Khóa Học Thông Minh
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Python](https://img.shields.io/badge/python-3.11+-green)
@@ -6,7 +6,7 @@
 
 ## 📖 Giới Thiệu
 
-**RAG Learning Assistant** là hệ thống AI đề xuất khóa học cá nhân hóa dựa trên phân tích CV và mục tiêu nghề nghiệp. Ứng dụng sử dụng RAG (Retrieval-Augmented Generation) kết hợp với OpenAI để tạo ra lộ trình học tập tối ưu cho từng người dùng.
+**Learning Assistant** là hệ thống AI đề xuất khóa học cá nhân hóa dựa trên phân tích CV và mục tiêu nghề nghiệp. Ứng dụng sử dụng RAG (Retrieval-Augmented Generation) kết hợp với OpenAI để tạo ra lộ trình học tập tối ưu cho từng người dùng.
 
 ## 🚀 Tính Năng Chính
 
@@ -281,4 +281,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-**RAG Learning Assistant** - Personalize Your Learning Journey with AI!
+**Learning Assistant** - Personalize Your Learning Journey with AI!

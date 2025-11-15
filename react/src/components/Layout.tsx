@@ -100,7 +100,7 @@ export default function Layout({
                 className="text-2xl sm:text-3xl font-extrabold"
                 style={{ color: colors.primary[700] }}
               >
-                RAG Learning Assistant
+                Learning Assistant
               </h1>
               <p
                 className="mt-2 text-sm sm:text-base"

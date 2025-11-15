@@ -7,7 +7,7 @@ import uvicorn
 # Sửa import - dùng lazy initialization
 from utils.openai_client import get_openai_client, test_openai_connection
 
-print("🚀 Đang khởi động RAG Learning Assistant API...")
+print("🚀 Đang khởi động Learning Assistant API...")
 
 # Kiểm tra kết nối OpenAI trước khi khởi động - SỬA CÁCH KIỂM TRA
 try:
@@ -25,7 +25,7 @@ except Exception as e:
     print(f"❌ Lỗi khởi tạo OpenAI client: {e}")
     exit(1)
 
-app = FastAPI(title="RAG Learning Assistant API", version="1.0.0")
+app = FastAPI(title="Learning Assistant API", version="1.0.0")
 
 # CORS
 app.add_middleware(
@@ -55,11 +55,11 @@ class NormalizedProfileIn(BaseModel):
 # API routes
 @app.get("/")
 async def root():
-    return {"message": "RAG Learning Assistant API", "status": "running", "version": "1.0.0"}
+    return {"message": "Learning Assistant API", "status": "running", "version": "1.0.0"}
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "service": "RAG Learning Assistant"}
+    return {"status": "healthy", "service": "Learning Assistant"}
 
 # Endpoint: upload file (pdf/docx/txt), trả về JSON normalized và content để frontend review
 @app.post("/api/upload-profile")
