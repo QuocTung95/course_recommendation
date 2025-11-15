@@ -1,4 +1,4 @@
-# .gitignore cho RAG Learning Assistant Project
+# .gitignore cho Learning Assistant Project
 
 ## 🔐 Environment Variables & API Keys
 *.env

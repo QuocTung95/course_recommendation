@@ -1,4 +1,4 @@
-## 🔧 Coding Convention & UI/UX Style Guide cho RAG Learning Assistant
+## 🔧 Coding Convention & UI/UX Style Guide cho Learning Assistant
 
 ### 1. **Hiệu ứng loading**
 

@@ -2,13 +2,7 @@
 
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
-import {
-  MdAccountCircle,
-  MdQuiz,
-  MdSchool,
-  MdCheckCircle,
-  MdEmojiEvents,
-} from "react-icons/md";
+import { MdAccountCircle, MdQuiz, MdSchool, MdCheckCircle, MdEmojiEvents } from "react-icons/md";
 import { colors } from "@/theme/colors";
 import Link from "next/link";
 
@@ -18,11 +12,7 @@ interface LayoutProps {
   totalSteps: number;
 }
 
-export default function Layout({
-  children,
-  currentStep,
-  totalSteps,
-}: LayoutProps) {
+export default function Layout({ children, currentStep, totalSteps }: LayoutProps) {
   // User-facing steps
   const steps = [
     { key: "profile", label: "Profile", Icon: MdAccountCircle },
@@ -78,13 +68,7 @@ export default function Layout({
               style={{ backgroundColor: colors.primary[500] }}
             >
               {/* subtle professional icon */}
-              <svg
-                className="w-6 h-6 text-white"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                aria-hidden
-              >
+              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
                 <path
                   strokeWidth="1.5"
                   strokeLinecap="round"
@@ -94,18 +78,11 @@ export default function Layout({
               </svg>
             </div>
             <div style={{ marginLeft: 12 }}>
-              <h1
-                className="text-2xl sm:text-3xl font-extrabold"
-                style={{ color: colors.primary[700] }}
-              >
-                RAG Learning Assistant
+              <h1 className="text-2xl sm:text-3xl font-extrabold" style={{ color: colors.primary[700] }}>
+                Learning Assistant
               </h1>
-              <p
-                className="mt-2 text-sm sm:text-base"
-                style={{ color: colors.primary[200] }}
-              >
-                Analyze CV / profile and get a personalized learning plan —
-                includes pre/post quizzes to track progress.
+              <p className="mt-2 text-sm sm:text-base" style={{ color: colors.primary[200] }}>
+                Analyze CV / profile and get a personalized learning plan — includes pre/post quizzes to track progress.
               </p>
               {/* Add small link to /welcome */}
               {/* <div style={{ marginTop: 6 }}>
@@ -175,19 +152,12 @@ export default function Layout({
                             : isCompleted
                             ? colors.primary[300]
                             : colors.primary[200],
-                          boxShadow: isActive
-                            ? "0 12px 30px rgba(16,24,40,0.16)"
-                            : "none",
-                          transform: isActive
-                            ? "translateY(-4px) scale(1.03)"
-                            : "none",
+                          boxShadow: isActive ? "0 12px 30px rgba(16,24,40,0.16)" : "none",
+                          transform: isActive ? "translateY(-4px) scale(1.03)" : "none",
                           transition: "all .18s ease",
                         }}
                       >
-                        <IconComp
-                          size={isActive ? 26 : 20}
-                          color={isActive ? "#fff" : colors.primary[700]}
-                        />
+                        <IconComp size={isActive ? 26 : 20} color={isActive ? "#fff" : colors.primary[700]} />
                       </div>
 
                       <div
@@ -211,9 +181,7 @@ export default function Layout({
                           flex: 1,
                           marginLeft: 12,
                           marginRight: 12,
-                          background: isCompleted
-                            ? colors.primary[300]
-                            : colors.primary[200],
+                          background: isCompleted ? colors.primary[300] : colors.primary[200],
                           borderRadius: 999,
                           alignSelf: "center",
                           minWidth: 40,
@@ -230,10 +198,7 @@ export default function Layout({
         </div>
 
         {/* Main content wrapper */}
-        <main
-          className="rounded-2xl p-6 md:p-8"
-          style={{ backgroundColor: colors.primary[50], marginTop: 30 }}
-        >
+        <main className="rounded-2xl p-6 md:p-8" style={{ backgroundColor: colors.primary[50], marginTop: 30 }}>
           {children}
         </main>
       </div>

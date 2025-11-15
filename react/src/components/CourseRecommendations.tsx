@@ -71,14 +71,11 @@ export default function CourseRecommendations({
         if (typeof (api as any)?.recommendCourses === "function") {
           response = await (api as any).recommendCourses(payload);
         } else {
-          const res = await fetch(
-            "http://localhost:8000/api/recommend-courses",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload),
-            }
-          );
+          const res = await fetch("http://localhost:8000/api/recommend-courses", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
           response = res.ok ? await res.json() : { courses: [] };
         }
 
@@ -130,15 +127,8 @@ export default function CourseRecommendations({
       level = "Trình độ Nâng cao";
       icon = <MdEmojiEvents />;
       color = colors.success[500];
-      strengths = [
-        "Nền tảng kỹ thuật vững chắc",
-        "Kinh nghiệm thực tế phong phú",
-        "Khả năng giải quyết vấn đề tốt",
-      ];
-      weaknesses = [
-        "Cần cập nhật công nghệ mới nhất",
-        "Có thể thiếu kinh nghiệm với hệ thống quy mô lớn",
-      ];
+      strengths = ["Nền tảng kỹ thuật vững chắc", "Kinh nghiệm thực tế phong phú", "Khả năng giải quyết vấn đề tốt"];
+      weaknesses = ["Cần cập nhật công nghệ mới nhất", "Có thể thiếu kinh nghiệm với hệ thống quy mô lớn"];
       recommendations = [
         "Học các công nghệ hiện đại và best practices",
         "Phát triển kỹ năng kiến trúc hệ thống",
@@ -150,11 +140,7 @@ export default function CourseRecommendations({
       level = "Trình độ Trung cấp";
       icon = <MdThumbUp />;
       color = colors.primary[500];
-      strengths = [
-        "Hiểu biết cơ bản vững vàng",
-        "Có kinh nghiệm với các dự án nhỏ",
-        "Khả năng học hỏi nhanh",
-      ];
+      strengths = ["Hiểu biết cơ bản vững vàng", "Có kinh nghiệm với các dự án nhỏ", "Khả năng học hỏi nhanh"];
       weaknesses = [
         "Cần củng cố kiến thức nâng cao",
         "Thiếu kinh nghiệm với hệ thống phân tán",
@@ -165,29 +151,19 @@ export default function CourseRecommendations({
         "Thực hành với các dự án thực tế",
         "Phát triển kỹ năng optimization",
       ];
-      overallFeedback =
-        "Bạn đang ở giai đoạn phát triển tốt! Hãy xây dựng nền tảng vững chắc cho sự nghiệp.";
+      overallFeedback = "Bạn đang ở giai đoạn phát triển tốt! Hãy xây dựng nền tảng vững chắc cho sự nghiệp.";
     } else {
       level = "Người mới bắt đầu";
       icon = <MdLightbulb />;
       color = colors.primary[400];
-      strengths = [
-        "Tinh thần học hỏi cao",
-        "Không bị ảnh hưởng bởi thói quen cũ",
-        "Có thể tiếp cận từ fundamentals",
-      ];
-      weaknesses = [
-        "Thiếu kinh nghiệm thực tế",
-        "Cần xây dựng nền tảng cơ bản",
-        "Chưa thành thạo debugging",
-      ];
+      strengths = ["Tinh thần học hỏi cao", "Không bị ảnh hưởng bởi thói quen cũ", "Có thể tiếp cận từ fundamentals"];
+      weaknesses = ["Thiếu kinh nghiệm thực tế", "Cần xây dựng nền tảng cơ bản", "Chưa thành thạo debugging"];
       recommendations = [
         "Bắt đầu với khóa học cơ bản vững chắc",
         "Thực hành thường xuyên với bài tập nhỏ",
         "Xây dựng project cá nhân đầu tiên",
       ];
-      overallFeedback =
-        "Đây là thời điểm hoàn hảo để bắt đầu! Hãy xây dựng nền tảng thật vững chắc.";
+      overallFeedback = "Đây là thời điểm hoàn hảo để bắt đầu! Hãy xây dựng nền tảng thật vững chắc.";
     }
 
     // Thêm strengths từ skills nếu có
@@ -247,27 +223,16 @@ export default function CourseRecommendations({
     } else {
       // Fallback: tìm kiếm trên Udemy với course title
       const searchQuery = encodeURIComponent(course.course_title);
-      window.open(
-        `https://www.udemy.com/courses/search/?q=${searchQuery}`,
-        "_blank",
-        "noopener,noreferrer"
-      );
+      window.open(`https://www.udemy.com/courses/search/?q=${searchQuery}`, "_blank", "noopener,noreferrer");
     }
   };
 
   return (
     <div className="max-w-5xl mx-auto">
-      <FullScreenLoader
-        active={isLoading}
-        message="Generating course recommendations"
-      />
+      <FullScreenLoader active={isLoading} message="Recommending..." />
 
       <div className="text-center mb-8">
-        <h2
-          style={{ color: colors.primary[700], fontWeight: 800, fontSize: 24 }}
-        >
-          Personalized Learning Path
-        </h2>
+        <h2 style={{ color: colors.primary[700], fontWeight: 800, fontSize: 24 }}>Personalized Learning Path</h2>
         <p style={{ color: colors.primary[600], opacity: 0.9 }}>
           Designed for you based on your profile analysis and goals
         </p>
@@ -390,14 +355,9 @@ export default function CourseRecommendations({
                     }}
                   >
                     {assessment.strengths.map((s, i) => (
-                      <li
-                        key={i}
-                        style={{ marginBottom: 8, display: "flex", gap: 8 }}
-                      >
+                      <li key={i} style={{ marginBottom: 8, display: "flex", gap: 8 }}>
                         {/* use primary tone for check icon */}
-                        <MdCheckCircle
-                          style={{ color: colors.primary[300], marginTop: 4 }}
-                        />
+                        <MdCheckCircle style={{ color: colors.primary[300], marginTop: 4 }} />
                         <span>{s}</span>
                       </li>
                     ))}
@@ -426,13 +386,8 @@ export default function CourseRecommendations({
                     }}
                   >
                     {assessment.weaknesses.map((w, i) => (
-                      <li
-                        key={i}
-                        style={{ marginBottom: 8, display: "flex", gap: 8 }}
-                      >
-                        <MdCheckCircle
-                          style={{ color: colors.primary[300], marginTop: 4 }}
-                        />
+                      <li key={i} style={{ marginBottom: 8, display: "flex", gap: 8 }}>
+                        <MdCheckCircle style={{ color: colors.primary[300], marginTop: 4 }} />
                         <span>{w}</span>
                       </li>
                     ))}
@@ -461,13 +416,8 @@ export default function CourseRecommendations({
                     }}
                   >
                     {assessment.recommendations.map((r, i) => (
-                      <li
-                        key={i}
-                        style={{ marginBottom: 8, display: "flex", gap: 8 }}
-                      >
-                        <MdCheckCircle
-                          style={{ color: colors.primary[300], marginTop: 4 }}
-                        />
+                      <li key={i} style={{ marginBottom: 8, display: "flex", gap: 8 }}>
+                        <MdCheckCircle style={{ color: colors.primary[300], marginTop: 4 }} />
                         <span>{r}</span>
                       </li>
                     ))}
@@ -503,9 +453,7 @@ export default function CourseRecommendations({
             <Card
               key={index}
               hover
-              onClick={() =>
-                setSelectedCourse(isSelected ? null : course.course_title)
-              }
+              onClick={() => setSelectedCourse(isSelected ? null : course.course_title)}
               className="p-5 cursor-pointer transition-all"
               style={{ marginBottom: 20, marginLeft: 20, marginRight: 20 }}
             >
@@ -569,9 +517,7 @@ export default function CourseRecommendations({
                     }}
                   >
                     <MdPerson style={{ color: colors.primary[600] }} />{" "}
-                    <span style={{ color: colors.primary[600] }}>
-                      {course.instructor || "Expert Instructor"}
-                    </span>
+                    <span style={{ color: colors.primary[600] }}>{course.instructor || "Expert Instructor"}</span>
                   </div>
                   <div
                     style={{
@@ -585,9 +531,7 @@ export default function CourseRecommendations({
                     }}
                   >
                     <MdStar style={{ color: colors.primary[600] }} />{" "}
-                    <strong style={{ color: colors.primary[700] }}>
-                      {course.rating || 4.6}
-                    </strong>
+                    <strong style={{ color: colors.primary[700] }}>{course.rating || 4.6}</strong>
                   </div>
                   <div
                     style={{
@@ -601,11 +545,7 @@ export default function CourseRecommendations({
                     }}
                   >
                     <MdAccessTime style={{ color: colors.primary[600] }} />{" "}
-                    <span
-                      style={{ color: colors.primary[700], fontWeight: 700 }}
-                    >
-                      {course.duration || "12h"}
-                    </span>
+                    <span style={{ color: colors.primary[700], fontWeight: 700 }}>{course.duration || "12h"}</span>
                   </div>
                   <div
                     style={{
@@ -618,14 +558,8 @@ export default function CourseRecommendations({
                       border: `1px solid ${colors.primary[100]}`,
                     }}
                   >
-                    <span
-                      style={{ color: colors.primary[600], fontWeight: 700 }}
-                    >
-                      Level
-                    </span>{" "}
-                    <strong style={{ color: colors.primary[700] }}>
-                      {course.level || "Intermediate"}
-                    </strong>
+                    <span style={{ color: colors.primary[600], fontWeight: 700 }}>Level</span>{" "}
+                    <strong style={{ color: colors.primary[700] }}>{course.level || "Intermediate"}</strong>
                   </div>
                 </div>
 
@@ -793,15 +727,10 @@ export default function CourseRecommendations({
                       }}
                     >
                       <li style={{ marginBottom: 6 }}>
-                        Matches your goal to become{" "}
-                        <strong>{careerGoal}</strong>
+                        Matches your goal to become <strong>{careerGoal}</strong>
                       </li>
-                      <li style={{ marginBottom: 6 }}>
-                        Addresses gaps found in your assessment
-                      </li>
-                      <li style={{ marginBottom: 6 }}>
-                        Develops skills you need to improve
-                      </li>
+                      <li style={{ marginBottom: 6 }}>Addresses gaps found in your assessment</li>
+                      <li style={{ marginBottom: 6 }}>Develops skills you need to improve</li>
                     </ul>
 
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -841,15 +770,11 @@ export default function CourseRecommendations({
           <MdMenuBook /> <span>Analyze again</span>
         </Button>
         <div style={{ display: "flex", gap: 8 }}>
-          <Button
-            variant="outline"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          >
+          <Button variant="outline" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
             <MdSearch /> <span>View AI analysis</span>
           </Button>
           <Button variant="primary" onClick={onContinue}>
-            Continue to Final Test{" "}
-            <span style={{ fontSize: 12, marginLeft: 8 }}>(Final Test)</span>
+            Continue to Final Test <span style={{ fontSize: 12, marginLeft: 8 }}>(Final Test)</span>
           </Button>
         </div>
       </div>
