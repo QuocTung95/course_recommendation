@@ -22,19 +22,18 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
       icon: <MdAutoAwesome className="w-6 h-6" />,
       title: "AI-Powered Analysis",
       description:
-        "Phân tích CV thông minh với AI để hiểu rõ kỹ năng và kinh nghiệm của bạn",
+        "Automatically analyze your CV to understand your skills and experience",
     },
     {
       icon: <MdSchool className="w-6 h-6" />,
       title: "Personalized Learning Path",
-      description:
-        "Lộ trình học tập được thiết kế riêng dựa trên mục tiêu nghề nghiệp",
+      description: "A tailored learning roadmap aligned with your career goals",
     },
     {
       icon: <MdTrendingUp className="w-6 h-6" />,
       title: "Progress Tracking",
       description:
-        "Theo dõi tiến bộ với Pre-Quiz và Post-Quiz để đo lường sự cải thiện",
+        "Track progress with pre- and post-quizzes to measure improvement",
     },
   ];
 
@@ -178,7 +177,8 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
                 fontWeight: 900,
               }}
             >
-              Khám phá vùng trời tri thức — lộ trình học cá nhân hóa bằng AI
+              Explore a world of learning — AI-powered personalized learning
+              paths
             </h1>
 
             <p
@@ -189,8 +189,9 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
                 opacity: 0.95,
               }}
             >
-              Phân tích CV bằng AI, tạo Pre-Quiz tùy chỉnh và đề xuất khóa học
-              phù hợp — bắt đầu hành trình học tập thông minh ngay hôm nay.
+              Analyze your CV with AI, generate a tailored pre-quiz, and get
+              course recommendations — start your smarter learning journey
+              today.
             </p>
 
             {/* SINGLE MAIN CTA - centered and prominent */}
@@ -209,7 +210,7 @@ export default function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
                 className="cta-hero"
               >
                 <MdRocketLaunch size={22} />{" "}
-                <span style={{ marginLeft: 12 }}>Phân Tích & Tiếp Tục</span>
+                <span style={{ marginLeft: 12 }}>Analyze & Continue</span>
               </Button>
             </div>
           </div>

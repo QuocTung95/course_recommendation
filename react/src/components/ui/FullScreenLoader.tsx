@@ -58,7 +58,7 @@ export default function FullScreenLoader({
 
   const dotsText = ".".repeat(dots);
 
-  return (
+  return visible ? (
     <div
       role="status"
       aria-live="polite"
@@ -94,7 +94,7 @@ export default function FullScreenLoader({
             color: "rgba(255,255,255,0.85)",
           }}
         >
-          Vui lòng chờ trong giây lát — hệ thống đang xử lý yêu cầu của bạn.
+          Please wait a moment — we are processing your request.
         </div>
 
         <div style={{ marginTop: 18 }}>
@@ -113,8 +113,7 @@ export default function FullScreenLoader({
               style={{
                 height: "100%",
                 width: `${progress}%`,
-                background:
-                  "linear-gradient(90deg, ${colors.primary[500]} 0%, ${colors.primary[400]} 100%)",
+                background: `linear-gradient(90deg, ${colors.primary[500]} 0%, ${colors.primary[400]} 100%)`,
                 borderRadius: 999,
                 transition: `width ${transitionMs}ms linear`,
                 boxShadow: "0 6px 20px rgba(50,130,184,0.16)",
@@ -134,5 +133,5 @@ export default function FullScreenLoader({
         </div>
       </div>
     </div>
-  );
+  ) : null;
 }

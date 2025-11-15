@@ -50,26 +50,26 @@ export default function CompletionScreen({
   ): { level: string; color: string; Icon?: ReactNode } => {
     if (score >= 90)
       return {
-        level: "Xuất sắc",
+        level: "Excellent",
         color: colors.success[500],
         Icon: <FiAward />,
       };
     if (score >= 80)
       return {
-        level: "Rất tốt",
+        level: "Very good",
         color: colors.success[500],
         Icon: <MdEmojiEvents />,
       };
     if (score >= 70)
-      return { level: "Tốt", color: colors.primary[500], Icon: <FiTarget /> };
+      return { level: "Good", color: colors.primary[500], Icon: <FiTarget /> };
     if (score >= 60)
       return {
-        level: "Khá",
+        level: "Fair",
         color: colors.primary[600],
         Icon: <FiBarChart2 />,
       };
     return {
-      level: "Cần cải thiện",
+      level: "Needs improvement",
       color: colors.error[500],
       Icon: <MdSchool />,
     };
@@ -81,21 +81,21 @@ export default function CompletionScreen({
   const stats = [
     {
       icon: <FiTarget className="w-5 h-5" />,
-      label: "Điểm Pre-Quiz",
+      label: "Pre-Quiz Score",
       value: `${preQuizScore?.score ?? 0}/${preQuizScore?.total ?? 0}`,
       percentage: preScore,
       color: colors.primary[500],
     },
     {
       icon: <FiAward className="w-5 h-5" />,
-      label: "Điểm Post-Quiz",
+      label: "Post-Quiz Score",
       value: `${postQuizScore?.score ?? 0}/${postQuizScore?.total ?? 0}`,
       percentage: postScore,
       color: colors.primary[300],
     },
     {
       icon: <FiBarChart2 className="w-5 h-5" />,
-      label: "Tiến bộ",
+      label: "Improvement",
       value: `${improvement > 0 ? "+" : ""}${improvement} điểm`,
       percentage: Math.abs(improvementPercentage),
       color: improvement >= 0 ? colors.success[500] : colors.error[500],
@@ -104,17 +104,17 @@ export default function CompletionScreen({
 
   const recommendations = [
     {
-      title: "Tiếp tục học tập",
+      title: "Keep learning",
       description: "Duy trì thói quen học tập đều đặn để củng cố kiến thức",
       icon: <MdSchool />,
     },
     {
-      title: "Thực hành dự án",
+      title: "Project practice",
       description: "Áp dụng kiến thức vào các dự án thực tế",
       icon: <MdTrendingUp />,
     },
     {
-      title: "Tham gia cộng đồng",
+      title: "Join the community",
       description: "Kết nối với các developer khác để học hỏi",
       icon: <MdShare />,
     },
@@ -154,7 +154,7 @@ export default function CompletionScreen({
             fontWeight: 700,
           }}
         >
-          Chúc mừng hoàn thành!
+          Congratulations on completing the path!
         </h1>
 
         <p
@@ -164,8 +164,8 @@ export default function CompletionScreen({
             margin: "0 auto",
           }}
         >
-          Bạn đã hoàn thành lộ trình. Dưới đây là tổng quan kết quả và những
-          khuyến nghị để tiếp tục phát triển.
+          You've completed the pathway. Below is a summary of your results and
+          recommendations to continue improving.
         </p>
       </motion.div>
 
@@ -264,7 +264,7 @@ export default function CompletionScreen({
               textAlign: "center",
             }}
           >
-            Phân tích hiệu suất
+            Performance Analysis
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -277,7 +277,7 @@ export default function CompletionScreen({
                   marginBottom: 8,
                 }}
               >
-                Trước khi học
+                Before learning
               </div>
               <div
                 style={{
@@ -314,7 +314,7 @@ export default function CompletionScreen({
                   marginBottom: 8,
                 }}
               >
-                Sau khi học
+                After learning
               </div>
               <div
                 style={{
@@ -431,7 +431,7 @@ export default function CompletionScreen({
             marginBottom: 16,
           }}
         >
-          Khuyến nghị tiếp theo
+          Next Recommendations
         </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -488,7 +488,7 @@ export default function CompletionScreen({
       >
         <Button size="lg" onClick={onViewCourses} className="group">
           <MdSchool className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-          Xem Lại Khóa Học
+          View Recommended Courses
         </Button>
 
         <Button
@@ -498,12 +498,12 @@ export default function CompletionScreen({
           className="group"
         >
           <MdReplay className="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform" />
-          Bắt Đầu Lại
+          Restart
         </Button>
 
         <Button variant="ghost" size="lg" onClick={() => window.print()}>
           <MdShare className="w-5 h-5 mr-2" />
-          Chia Sẻ Kết Quả
+          Share Results
         </Button>
       </motion.div>
 

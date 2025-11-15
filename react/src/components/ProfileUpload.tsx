@@ -104,7 +104,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
     setIsAnalyzing(true);
     setUploadProgress({
       status: "uploading",
-      message: "Đang upload CV...",
+      message: "Uploading CV...",
     });
 
     const formData = new FormData();
@@ -114,7 +114,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
     try {
       setUploadProgress({
         status: "analyzing",
-        message: "AI đang phân tích CV và parse text...",
+        message: "AI is analyzing and parsing your CV...",
       });
 
       const response = await fetch(
@@ -134,8 +134,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
       if (data.ok) {
         setUploadProgress({
           status: "complete",
-          message:
-            "✅ Đã parse CV thành công! Bạn có thể chỉnh sửa text bên dưới.",
+          message: "✅ CV parsed successfully! You can edit the text below.",
         });
 
         // Hiển thị text đã parse trong textarea, cho phép chỉnh sửa
@@ -149,8 +148,8 @@ MỤC TIÊU NGHỀ NGHIỆP:
       console.error("Upload error:", error);
       setUploadProgress({
         status: "error",
-        message: `❌ Lỗi: ${
-          error instanceof Error ? error.message : "Upload thất bại"
+        message: `❌ Error: ${
+          error instanceof Error ? error.message : "Upload failed"
         }`,
       });
     } finally {
@@ -168,14 +167,14 @@ MỤC TIÊU NGHỀ NGHIỆP:
   const handleManualSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profileText.trim()) {
-      alert("Vui lòng nhập nội dung profile");
+      alert("Please enter profile content");
       return;
     }
 
     setIsAnalyzing(true);
     setUploadProgress({
       status: "analyzing",
-      message: "AI đang phân tích profile và tạo bài đánh giá...",
+      message: "AI is analyzing your profile and generating the quiz...",
     });
 
     try {
@@ -219,7 +218,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
 
       setUploadProgress({
         status: "complete",
-        message: "✅ Đã phân tích profile thành công!",
+        message: "✅ Profile analyzed successfully!",
       });
 
       // Chuyển sang pre-quiz
@@ -233,7 +232,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
       console.error("Manual submit error:", error);
       setUploadProgress({
         status: "error",
-        message: "❌ Lỗi phân tích profile",
+        message: "❌ Profile analysis failed",
       });
     } finally {
       setIsAnalyzing(false);
@@ -242,14 +241,14 @@ MỤC TIÊU NGHỀ NGHIỆP:
 
   const handleContinueWithParsedText = async () => {
     if (!profileText.trim()) {
-      alert("Vui lòng kiểm tra lại nội dung profile");
+      alert("Please check the profile content");
       return;
     }
 
     setIsAnalyzing(true);
     setUploadProgress({
       status: "analyzing",
-      message: "AI đang phân tích profile và tạo bài đánh giá...",
+      message: "AI is analyzing your profile and generating the quiz...",
     });
 
     try {
@@ -302,7 +301,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
       console.error("Continue error:", error);
       setUploadProgress({
         status: "error",
-        message: "❌ Lỗi phân tích profile",
+        message: "❌ Profile analysis failed",
       });
     } finally {
       setIsAnalyzing(false);
@@ -380,7 +379,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
 
       <div className="max-w-4xl mx-auto relative" style={{ zIndex: 2 }}>
         {/* show full-screen loading overlay while analyzing (always mounted) */}
-        <FullScreenLoader active={isAnalyzing} message="Đang phân tích" />
+        <FullScreenLoader active={isAnalyzing} message="Analyzing profile" />
 
         <div style={{ textAlign: "center", marginBottom: 18 }}>
           <h2
@@ -391,11 +390,11 @@ MỤC TIÊU NGHỀ NGHIỆP:
               marginBottom: 6,
             }}
           >
-            Tải Lên CV & Phân Tích
+            Upload CV & Analyze
           </h2>
           <p style={{ color: colors.neutral[600], marginBottom: 0 }}>
-            Tải lên CV hoặc nhập thủ công — AI sẽ phân tích và đề xuất lộ trình
-            học phù hợp.
+            Upload your CV or enter your profile manually — the AI will analyze
+            and recommend a learning path.
           </p>
         </div>
 
@@ -434,7 +433,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
                   marginBottom: 8,
                 }}
               >
-                Kéo & Thả hoặc chọn tệp
+                Drag & drop or select a file
               </p>
               <p
                 style={{
@@ -444,8 +443,8 @@ MỤC TIÊU NGHỀ NGHIỆP:
                   margin: "0 auto",
                 }}
               >
-                Hỗ trợ: PDF, DOCX, TXT — chúng tôi sẽ tự động trích xuất và phân
-                tích nội dung.
+                Supported formats: PDF, DOCX, TXT — we'll extract and analyze
+                the content automatically.
               </p>
 
               <input
@@ -472,7 +471,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
                     fileInputRef.current?.click();
                   }}
                 >
-                  Tải lên CV
+                  Upload CV
                 </Button>
               </div>
 
@@ -494,7 +493,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
                       fontSize: 13,
                     }}
                   >
-                    Đã chọn: {uploadedFile.name}
+                    Selected: {uploadedFile.name}
                   </div>
                 </div>
               )}
@@ -518,7 +517,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
                     marginBottom: 10,
                   }}
                 >
-                  Mục tiêu nghề nghiệp *
+                  Career goal *
                 </label>
                 <select
                   required
@@ -551,7 +550,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
                     marginBottom: 10,
                   }}
                 >
-                  Thông tin Profile/CV *
+                  Profile / CV information *
                 </label>
                 <textarea
                   required
@@ -570,7 +569,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
                     resize: "vertical",
                     minHeight: 180,
                   }}
-                  placeholder="Nhập thông tin profile: kinh nghiệm, kỹ năng, học vấn, dự án..."
+                  placeholder="Enter your profile details: work experience, technical skills, education, projects, career goals..."
                 />
               </div>
 
@@ -583,7 +582,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
                 }}
               >
                 <Button size="md" variant="outline" onClick={loadSampleProfile}>
-                  Dùng Profile Mẫu
+                  Use sample profile
                 </Button>
 
                 <Button
@@ -593,7 +592,7 @@ MỤC TIÊU NGHỀ NGHIỆP:
                   disabled={!profileText.trim() || isAnalyzing}
                   loading={isAnalyzing}
                 >
-                  {isAnalyzing ? "Đang phân tích..." : "Phân Tích & Tiếp Tục"}
+                  {isAnalyzing ? "Analyzing..." : "Analyze & Continue"}
                 </Button>
               </div>
             </form>

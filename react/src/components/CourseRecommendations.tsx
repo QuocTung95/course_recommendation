@@ -85,7 +85,7 @@ export default function CourseRecommendations({
 
         setCourses(coursesList);
       } catch (err) {
-        setError("Không thể tải khóa học. Vui lòng thử lại.");
+        setError("Cannot load courses. Please try again.");
         setCourses(getFallbackCourses());
       } finally {
         setIsLoading(false);
@@ -118,10 +118,10 @@ export default function CourseRecommendations({
   const getPerformanceFeedbackText = () => {
     const percentage = (quizScore.score / quizScore.total) * 100;
     if (percentage >= 80)
-      return "🎉 Xuất sắc! Bạn có nền tảng rất tốt cho lộ trình học tập.";
+      return "🎉 Excellent! You have a strong foundation for this learning path.";
     if (percentage >= 60)
-      return "👍 Tốt! Bạn đã có kiến thức nền tảng vững chắc.";
-    return "💪 Cần cải thiện! Các khóa học dưới đây sẽ giúp bạn xây dựng nền tảng vững chắc.";
+      return "👍 Good! You have a solid foundational knowledge.";
+    return "💪 Needs improvement. The following courses will help you build a solid foundation.";
   };
 
   const feedbackText = getPerformanceFeedbackText();
@@ -145,7 +145,7 @@ export default function CourseRecommendations({
               marginBottom: 6,
             }}
           >
-            Lỗi
+            Error
           </h3>
           <p style={{ color: colors.primary[700] }}>{error}</p>
         </div>
@@ -158,7 +158,7 @@ export default function CourseRecommendations({
             borderRadius: 8,
           }}
         >
-          Thử Lại
+          Try Again
         </button>
       </div>
     );
@@ -169,14 +169,14 @@ export default function CourseRecommendations({
   const stats = [
     {
       icon: <FiTarget className="w-5 h-5" />,
-      label: "Điểm Pre-Quiz",
+      label: "Pre-Quiz Score",
       value: `${quizScore.score}/${quizScore.total}`,
       percentage: (quizScore.score / quizScore.total) * 100,
       color: colors.primary[500],
     },
     {
       icon: <FiAward className="w-5 h-5" />,
-      label: "Điểm Post-Quiz",
+      label: "Post-Quiz Score",
       value: `${quizScore.score}/${quizScore.total}`,
       percentage: (quizScore.score / quizScore.total) * 100,
       // replaced accent.purple -> primary[300]
@@ -186,25 +186,19 @@ export default function CourseRecommendations({
 
   return (
     <div className="max-w-5xl mx-auto">
-      <FullScreenLoader active={isLoading} message="Đang gợi ý khóa học" />
+      <FullScreenLoader
+        active={isLoading}
+        message="Generating course recommendations"
+      />
 
       <div className="text-center mb-6">
         <h2
-          style={{
-            color: colors.primary[700],
-            fontWeight: 800,
-            fontSize: 20,
-          }}
+          style={{ color: colors.primary[700], fontWeight: 800, fontSize: 20 }}
         >
-          Khóa Học Được Gợi Ý
+          Recommended Courses
         </h2>
-        <p
-          style={{
-            color: colors.primary[600],
-            opacity: 0.9,
-          }}
-        >
-          Phân tích dựa trên profile và kết quả Pre-Quiz của bạn
+        <p style={{ color: colors.primary[600], opacity: 0.9 }}>
+          Personalized suggestions based on your profile and pre-quiz results
         </p>
       </div>
 
@@ -229,21 +223,11 @@ export default function CourseRecommendations({
           }}
         >
           <div>
-            <h3
-              style={{
-                color: colors.primary[700],
-                fontWeight: 700,
-              }}
-            >
-              Kết quả Pre-Quiz: {quizScore.score}/{quizScore.total} (
+            <h3 style={{ color: colors.primary[700], fontWeight: 700 }}>
+              Pre-Quiz Result: {quizScore.score}/{quizScore.total} (
               {Math.round((quizScore.score / quizScore.total) * 100)}%)
             </h3>
-            <p
-              style={{
-                color: colors.primary[700],
-                marginTop: 6,
-              }}
-            >
+            <p style={{ color: colors.primary[700], marginTop: 6 }}>
               {feedbackText}
             </p>
           </div>
@@ -332,7 +316,7 @@ export default function CourseRecommendations({
                   </p>
                 </div>
 
-                {/* Metadata row: Instructor / Level / Rating / Duration */}
+                {/* Metadata row translated */}
                 <div
                   style={{
                     display: "flex",
@@ -353,7 +337,7 @@ export default function CourseRecommendations({
                       border: `1px solid ${colors.primary[100]}`,
                     }}
                   >
-                    <MdPerson style={{ color: colors.primary[600] }} />{" "}
+                    <MdPerson style={{ color: colors.primary[600] }} />
                     <span
                       style={{ fontWeight: 700, color: colors.primary[700] }}
                     >
@@ -363,7 +347,6 @@ export default function CourseRecommendations({
                       Expert Instructor
                     </span>
                   </div>
-
                   <div
                     style={{
                       display: "inline-flex",
@@ -378,7 +361,6 @@ export default function CourseRecommendations({
                     <MdStar style={{ color: colors.primary[600] }} />{" "}
                     <strong style={{ color: colors.primary[700] }}>4.6</strong>
                   </div>
-
                   <div
                     style={{
                       display: "inline-flex",
@@ -397,7 +379,6 @@ export default function CourseRecommendations({
                       12h
                     </span>
                   </div>
-
                   <div
                     style={{
                       display: "inline-flex",
@@ -420,7 +401,7 @@ export default function CourseRecommendations({
                   </div>
                 </div>
 
-                {/* Two-column details: Outcomes / Requirements / Audience */}
+                {/* Two-column details: Outcomes / Requirements / Audience — translate headings */}
                 <div
                   style={{
                     display: "grid",
@@ -548,79 +529,79 @@ export default function CourseRecommendations({
                     </ul>
                   </div>
                 </div>
-              </div>
 
-              {isSelected && (
-                /* KEEP EXISTING "Tại sao phù hợp?" BLOCK UNCHANGED */
-                <div
-                  style={{
-                    marginTop: 6,
-                    padding: 14,
-                    backgroundColor: colors.primary[50],
-                    border: `1px solid ${colors.primary[100]}`,
-                    borderRadius: 10,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 12,
-                  }}
-                >
-                  <h4
+                {/* KEEP "Why this fits you" block but in English */}
+                {isSelected && (
+                  <div
                     style={{
-                      color: colors.primary[700],
-                      fontWeight: 800,
-                      margin: 0,
+                      marginTop: 6,
+                      padding: 14,
+                      backgroundColor: colors.primary[50],
+                      border: `1px solid ${colors.primary[100]}`,
+                      borderRadius: 10,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 12,
                     }}
                   >
-                    Tại sao phù hợp với bạn?
-                  </h4>
-                  <ul
-                    style={{
-                      margin: 0,
-                      paddingLeft: 16,
-                      color: colors.primary[700],
-                    }}
-                  >
-                    <li style={{ marginBottom: 6 }}>
-                      Phù hợp với mục tiêu trở thành{" "}
-                      <strong>{careerGoal}</strong>
-                    </li>
-                    <li style={{ marginBottom: 6 }}>
-                      Bổ sung kiến thức theo kết quả quiz
-                    </li>
-                    <li style={{ marginBottom: 6 }}>
-                      Liên quan tới kinh nghiệm hiện tại
-                    </li>
-                  </ul>
-
-                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                    <Button
-                      size="md"
-                      variant="primary"
-                      onClick={() => {
-                        /* start learning */
+                    <h4
+                      style={{
+                        color: colors.primary[700],
+                        fontWeight: 800,
+                        margin: 0,
                       }}
                     >
-                      <MdMenuBook /> <span>Bắt Đầu Học Ngay</span>
-                    </Button>
-
-                    <Button
-                      size="md"
-                      variant="outline"
-                      onClick={() => {
-                        /* view syllabus */
+                      Why this is a good fit
+                    </h4>
+                    <ul
+                      style={{
+                        margin: 0,
+                        paddingLeft: 16,
+                        color: colors.primary[700],
                       }}
                     >
-                      <MdInfo /> <span>Xem Chi Tiết Syllabus</span>
-                    </Button>
+                      <li style={{ marginBottom: 6 }}>
+                        Matches your goal to become{" "}
+                        <strong>{careerGoal}</strong>
+                      </li>
+                      <li style={{ marginBottom: 6 }}>
+                        Addresses gaps found in your quiz
+                      </li>
+                      <li style={{ marginBottom: 6 }}>
+                        Aligns with your current experience
+                      </li>
+                    </ul>
+
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                      <Button
+                        size="md"
+                        variant="primary"
+                        onClick={() => {
+                          /* start learning */
+                        }}
+                      >
+                        <MdMenuBook /> <span>Start Learning Now</span>
+                      </Button>
+
+                      <Button
+                        size="md"
+                        variant="outline"
+                        onClick={() => {
+                          /* view syllabus */
+                        }}
+                      >
+                        <MdInfo /> <span>View Detailed Syllabus</span>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </Card>
           );
         })}
       </div>
 
-      {/* Action Buttons (use Button component) */}
+      {/* Action Buttons translated */}
       <div
         style={{
           marginTop: 18,
@@ -633,19 +614,17 @@ export default function CourseRecommendations({
         }}
       >
         <Button variant="outline" onClick={onRetakeQuiz}>
-          <MdMenuBook /> <span>Làm Lại Pre-Quiz</span>
+          <MdMenuBook /> <span>Retake Pre-Quiz</span>
         </Button>
-
         <div style={{ display: "flex", gap: 8 }}>
           <Button
             variant="outline"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <MdSearch /> <span>Xem lại profile</span>
+            <MdSearch /> <span>Review profile</span>
           </Button>
-
           <Button variant="primary" onClick={onContinue}>
-            Tiếp Tục Học Tập{" "}
+            Continue to Post-Quiz{" "}
             <span style={{ fontSize: 12, marginLeft: 8 }}>(Post-Quiz)</span>
           </Button>
         </div>

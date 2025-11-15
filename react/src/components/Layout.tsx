@@ -104,8 +104,8 @@ export default function Layout({
                 className="mt-2 text-sm sm:text-base"
                 style={{ color: colors.primary[200] }}
               >
-                Phân tích CV / Profile và đề xuất lộ trình học phù hợp — kèm
-                quiz trước / sau để theo dõi tiến bộ.
+                Analyze CV / profile and get a personalized learning plan —
+                includes pre/post quizzes to track progress.
               </p>
               {/* Add small link to /welcome */}
               {/* <div style={{ marginTop: 6 }}>
